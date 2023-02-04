@@ -1,0 +1,88 @@
+{
+    "players": [
+        {
+            "name": "grey",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": true
+        },
+        {
+            "name": "green",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "name": "blue",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "name": "red",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "name": "yellow",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "name": "black",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "name": "white",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "name": "brown",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "name": "orange",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "name": "purple",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false	
+        },
+        {
+            "name": "pink",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        },
+        {
+            "name": "cyan",
+            "score": 0,
+            "x": 0,
+            "y": 0,
+            "visible": false
+        }
+    ]
+}

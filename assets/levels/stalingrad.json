@@ -1,0 +1,61 @@
+{
+    "name": "Stalingrad",
+    "description": "A 2v2 map in a park where you jump from building to building.",
+    "version": "1.0",
+    "objects": [
+        {
+            "collision": false,
+            "platform": false,
+            "x": 0,
+            "y": 250,
+            "width": 1920,
+            "height": 830,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 0,
+            "y": 0,
+            "width": 1920,
+            "height": 250,
+            "color": "green"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 0,
+            "y": 0,
+            "width": 350,
+            "height": 400,
+            "color": "grey"
+        },
+        {
+            "collision": true,
+            "platform": true,
+            "x": 230,
+            "y": 600,
+            "width": 370,
+            "height": 35,
+            "color": "grey"
+        },
+        {
+            "collision": true,
+            "platform": true,
+            "x": 845,
+            "y": 600,
+            "width": 370,
+            "height": 35,
+            "color": "grey"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 1620,
+            "y": 0,
+            "width": 300,
+            "height": 500,
+            "color": "grey"
+        }
+    ]
+}
