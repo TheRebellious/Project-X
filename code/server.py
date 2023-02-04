@@ -1,5 +1,6 @@
-import asyncio
+import json
 import socket
+import sys
 import threading
 from time import sleep
 import arcade
@@ -9,21 +10,28 @@ class Server:
     clientsockets = []
     clientPositions = []
 
-    def __init__(self, Host: bool, window: arcade.Window) -> None:
+    def __init__(self, Host: bool) -> None:
+        print("INIT")
         self.host = Host
-        self.window = window
 
-    async def start(self):
+    def start(self):
+        print("START")
         if self.host:
-            hostTask = asyncio.create_task(self.hostGame()) 
+            self.hostGame()
         else:
-            clientTask = asyncio.create_task(self.joinGame()) 
-        while True:
-            await asyncio.sleep(1)
+            self.joinGame()
 
-    async def accept(self):
+    def accept(self):
         while True:
             try:
+                if not arcade.get_window():
+                    if self.host:
+                        self.server.close()
+                        print("Server closed!")
+                    else:
+                        self.clientsocket.close()
+                        print("Client closed!")
+                    exit()
                 # print("Waiting for connection...")
                 self.clientsockets.insert(0, self.server.accept())
                 self.clientPositions.insert(0, [0, 0])
@@ -31,9 +39,9 @@ class Server:
                     f"Connection from {self.clientsockets[0][0]} has been established!")
             except:
                 pass
-                # print("Connection timed out!")
 
-    async def hostGame(self):
+    def hostGame(self):
+        print("HOST")
         try:
             print("Starting server...")
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -42,7 +50,7 @@ class Server:
             self.server.listen(1)
             self.server.settimeout(1)
             print("Waiting for clients...")
-            asyncio.create_task(self.accept())
+            threading.Thread(target=self.accept).start()
         except Exception as e:
             print(e)
         while True:
@@ -54,13 +62,14 @@ class Server:
                     temp = temp.split(",")
                     for y in temp:
                         y = int(y)
-                    print(f"{x[0].getpeername()} send:\nx: {temp[0]} y: {temp[1]}")
+                    print(
+                        f"{x[0].getpeername()} send:\nx: {temp[0]} y: {temp[1]}")
                     self.clientPositions[self.clientsockets.index(x)] = temp
                     sleep(1)
             except Exception as e:
                 print(e)
 
-    async def joinGame(self):
+    def joinGame(self):
         self.clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clientsocket.connect((socket.gethostname(), 1234))
         print("Connected to server!")
@@ -68,11 +77,29 @@ class Server:
             data = self.clientsocket.recv(1024).decode("utf-8")
             if data == "GETPOS=":
                 # self.clientsocket.send(bytes(f"POS={200},{700}", "utf-8"))
-                self.clientsocket.send(bytes(f"POS={self.window.player.center_x},{self.window.player.center_y}", "utf-8"))
+                self.clientsocket.send(bytes(
+                    f"POS={self.window.player.center_x},{self.window.player.center_y}", "utf-8"))
 
 
-# server = Server(True, None)
-# threading.Thread(target=server.start).start()
-# sleep(0.5)
-# client = Server(False, None)
-# threading.Thread(target=client.start).start()
+if __name__ == '__main__':
+    # check if the user wants to host or join a game
+    if sys.argv[1] == "host":
+        server = Server(True)
+        print("starting server as host")
+    elif sys.argv[1] == "join":
+        server = Server(False)
+        print("starting server as client")
+    else:
+        print("Invalid argument!")
+        exit()
+    serverThread = threading.Thread(target=server.start)
+    serverThread.start()
+    while True:
+        # look if the project X game is still running, if not exit the server
+        if not arcade.get_window():
+            serverThread.join()
+            exit()
+        if server.host:
+            # update the player positions
+            for x in server.clientsockets:
+                print(x[0].getpeername())

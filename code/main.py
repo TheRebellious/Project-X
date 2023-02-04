@@ -1,6 +1,5 @@
 import json
-import asyncio
-import threading
+import os
 import arcade
 from entities import Player
 
@@ -12,7 +11,7 @@ TITLE = "Project X"
 class GameWindow(arcade.Window):
     menuActive = True
     menuItemSelected = 0
-    titlescreenItems = ["Host Game", "Join Game", "Options", "Exit"]
+    titlescreenItems = ["Host Game", "Join Game", "Controls", "Exit"]
     menuItems = titlescreenItems
     server = None
 
@@ -22,6 +21,7 @@ class GameWindow(arcade.Window):
     gameActive = False
     colorDict = {
         "grey": arcade.color.ASH_GREY,
+        "aspargus": arcade.color.GRAY_ASPARAGUS,
         "green": arcade.color.GREEN,
         "blue": arcade.color.LIGHT_BLUE,
         "red": arcade.color.RED,
@@ -122,7 +122,7 @@ class GameWindow(arcade.Window):
         y = self.player.center_y
         # placeholder for the player is a box
         arcade.draw_rectangle_filled(
-            x, y+(height/2), width, height, arcade.color.RED)
+            x, y+(height/2), width, height, self.colorDict["aspargus"])
 
     def draw_entities(self):
         for i in self.entities:
@@ -153,7 +153,13 @@ class GameWindow(arcade.Window):
                 self.menuItemSelected = 0
                 self.menuActive = False
                 self.gameActive = True
-            if self.menuItems[self.menuItemSelected] == "Options":
+                os.popen("python code/server.py host")
+            if self.menuItems[self.menuItemSelected] == "Join Game":
+                self.menuItemSelected = 0
+                self.menuActive = False
+                self.gameActive = True
+                os.popen("python code/server.py join")  
+            if self.menuItems[self.menuItemSelected] == "Controls":
                 self.menuItemSelected = 0
                 self.menuActive = False
                 self.optionsMenuActive = True
@@ -202,4 +208,4 @@ class GameWindow(arcade.Window):
 if __name__ == "__main__":
     window = GameWindow(WINDOW_X, WINDOW_X, TITLE)
     arcade.run()
-
+    
