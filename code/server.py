@@ -96,9 +96,6 @@ if __name__ == '__main__':
     serverThread.start()
     while True:
         # look if the project X game is still running, if not exit the server
-        if not arcade.get_window():
-            serverThread.join()
-            exit()
         if server.host:
             # update the player positions
             for x in server.clientsockets:

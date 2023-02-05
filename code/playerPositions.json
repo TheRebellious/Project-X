@@ -2,13 +2,15 @@
     "players": [
         {
             "name": "aspargus",
+            "id": 0,
             "score": 0,
             "x": 0,
             "y": 0,
-            "visible": true
+            "visible": false
         },
         {
             "name": "green",
+            "id": 1,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -16,6 +18,7 @@
         },
         {
             "name": "blue",
+            "id": 2,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -23,6 +26,7 @@
         },
         {
             "name": "red",
+            "id": 3,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -30,6 +34,7 @@
         },
         {
             "name": "yellow",
+            "id": 4,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -37,6 +42,7 @@
         },
         {
             "name": "black",
+            "id": 5,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -44,6 +50,7 @@
         },
         {
             "name": "white",
+            "id": 6,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -51,6 +58,7 @@
         },
         {
             "name": "brown",
+            "id": 7,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -58,6 +66,7 @@
         },
         {
             "name": "orange",
+            "id": 8,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -65,6 +74,7 @@
         },
         {
             "name": "purple",
+            "id": 9,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -72,6 +82,7 @@
         },
         {
             "name": "pink",
+            "id": 10,
             "score": 0,
             "x": 0,
             "y": 0,
@@ -79,6 +90,7 @@
         },
         {
             "name": "cyan",
+            "id": 11,
             "score": 0,
             "x": 0,
             "y": 0,

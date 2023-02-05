@@ -1,7 +1,8 @@
 import json
 import os
+import threading
 import arcade
-from entities import Player
+from entities import Player, Entity
 
 WINDOW_X = 1920
 WINDOW_Y = 1080
@@ -99,9 +100,29 @@ class GameWindow(arcade.Window):
     def draw_game(self):
         self.draw_level()
         self.draw_entities()
-        self.draw_player()
+        with open("code\\playerPositions.json","r") as playerPositions:
+            playerPositions = json.load(playerPositions)
+        for i in playerPositions["players"]:
+            if self.player is None:
+                # find the first available player and make it the player
+                for x in playerPositions["players"]:
+                    if x["visible"] == False:
+                        self.player = Player(self, x["id"], 1, 0.25, 0.5, x["name"])
+                        break
+            if i["visible"]:
+                if i["id"] == self.player.id:
+                    pass
+                x = i["x"]
+                y = i["y"]
+                color = i["name"]
+                player = Player(self, i["id"], 1, 0.25, 0.5, color)
+                player.center_x = x
+                player.center_y = y
+                self.draw_player(player)
+        self.draw_player(self.player)
 
     # draws a level defined in the levels dictionary which references a json file
+
     def draw_level(self):
         with open("assets\\levels\\" + self.levels["Stalingrad"]) as level:
             self.level = json.load(level)
@@ -113,16 +134,15 @@ class GameWindow(arcade.Window):
             arcade.draw_rectangle_filled(
                 x+(width/2), y+(height/2), width, height, self.colorDict[i["color"]])
 
-    def draw_player(self):
-        if self.player is None:
-            self.player = Player(self)
-        width = self.player.width
-        height = self.player.height
-        x = self.player.center_x
-        y = self.player.center_y
+    def draw_player(self, player: Player):
+        width = player.width
+        height = player.height
+        x = player.center_x
+        y = player.center_y
+        color = player.color
         # placeholder for the player is a box
         arcade.draw_rectangle_filled(
-            x, y+(height/2), width, height, self.colorDict["aspargus"])
+            x, y+(height/2), width, height, color)
 
     def draw_entities(self):
         for i in self.entities:
@@ -150,15 +170,17 @@ class GameWindow(arcade.Window):
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ENTER and self.menuActive:
             if self.menuItems[self.menuItemSelected] == "Host Game":
+                self.host = True
                 self.menuItemSelected = 0
                 self.menuActive = False
                 self.gameActive = True
-                os.popen("python code/server.py host")
+                threading.Thread(target=os.system, args=("python code/server.py host",)).start()
             if self.menuItems[self.menuItemSelected] == "Join Game":
+                self.host = False
                 self.menuItemSelected = 0
                 self.menuActive = False
                 self.gameActive = True
-                os.popen("python code/server.py join")  
+                threading.Thread(target=os.system, args=("python code/server.py join",)).start() 
             if self.menuItems[self.menuItemSelected] == "Controls":
                 self.menuItemSelected = 0
                 self.menuActive = False
@@ -208,4 +230,3 @@ class GameWindow(arcade.Window):
 if __name__ == "__main__":
     window = GameWindow(WINDOW_X, WINDOW_X, TITLE)
     arcade.run()
-    

@@ -2,7 +2,7 @@ import arcade
 
 
 class Player():
-    def __init__(self, window: arcade.Window, scale=1, gravity=0.25, friction=0.5):
+    def __init__(self, window: arcade.Window, id, scale=1, gravity=0.25, friction=0.5, color="asparagus") -> None:
         super().__init__()
         self.window = window
         self.facing = "right"
@@ -16,6 +16,8 @@ class Player():
         self.gravity = gravity
         self.friction = friction
         self.on_ground = False
+        self.color = self.window.colorDict[color]
+        self.id = id
 
     def update(self):
         if self.center_x > self.window._width or self.center_x < 0:
