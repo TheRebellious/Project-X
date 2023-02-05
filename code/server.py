@@ -53,7 +53,7 @@ class Server:
             threading.Thread(target=self.accept).start()
         except Exception as e:
             print(e)
-        # threading.Thread(target=self.getAllPositions).start()
+        threading.Thread(target=self.getAllPositions).start()
 
     def getAllPositions(self):
         while True:
@@ -72,13 +72,14 @@ class Server:
                     sleep(1)
                 
                 # get all the positions and send them to the clients
-                with open("code\\playerPositions.json", "r") as f:
-                    temp = "POS="
-                    data = json.load(f)
-                    for x in data["players"]:
-                        temp += f"{x},{data['players'][x]['x']},{data['players'][x]['y']};"
-                    for x in self.clientsockets:
-                        x[0].send(bytes(temp, "utf-8"))
+                if len(self.clientsockets) > 0:
+                    with open("code\\playerPositions.json", "r") as f:
+                        temp = "POS="
+                        data = json.load(f)
+                        for x in data["players"]:
+                            temp += f"{x['id']},{x['x']},{[x]['y']};"
+                        for x in self.clientsockets:
+                            x[0].send(bytes(temp, "utf-8"))
             except Exception as e:
                 print(e)
 
