@@ -110,8 +110,10 @@ class GameWindow(arcade.Window):
                         self.player = Player(
                             self, x["id"], 1, 0.25, 0.5, x["name"])
                         # set the player's position to the position of the player in the json file
-                        playerPositions["players"][x["id"]]["x"] = self.player.center_x
-                        playerPositions["players"][x["id"]]["y"] = self.player.center_y
+                        playerPositions["players"][x["id"]
+                                                   ]["x"] = self.player.center_x
+                        playerPositions["players"][x["id"]
+                                                   ]["y"] = self.player.center_y
                         # set the player's visibility to true
                         playerPositions["players"][x["id"]]["visible"] = True
                         # write the changes to the json file
@@ -184,14 +186,14 @@ class GameWindow(arcade.Window):
                 self.menuActive = False
                 self.gameActive = True
                 threading.Thread(target=os.system, args=(
-                    "python code/server.py host",)).start()
+                    "python code/connection.py host",)).start()
             if self.menuItems[self.menuItemSelected] == "Join Game":
                 self.host = False
                 self.menuItemSelected = 0
                 self.menuActive = False
                 self.gameActive = True
                 threading.Thread(target=os.system, args=(
-                    "python code/server.py join",)).start()
+                    "python code/connection.py join",)).start()
             if self.menuItems[self.menuItemSelected] == "Controls":
                 self.menuItemSelected = 0
                 self.menuActive = False

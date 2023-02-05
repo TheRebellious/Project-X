@@ -70,14 +70,14 @@ class Server:
                         f"{x[0].getpeername()} send:\nx: {temp[0]} y: {temp[1]}")
                     self.clientPositions[self.clientsockets.index(x)] = temp
                     sleep(1)
-                
+
                 # get all the positions and send them to the clients
                 if len(self.clientsockets) > 0:
                     with open("code\\playerPositions.json", "r") as f:
                         temp = "POS="
                         data = json.load(f)
                         for x in data["players"]:
-                            temp += f"{x['id']},{x['x']},{[x]['y']};"
+                            temp += f"{x['id']},{x['x']},{x['y']};"
                         for x in self.clientsockets:
                             x[0].send(bytes(temp, "utf-8"))
             except Exception as e:

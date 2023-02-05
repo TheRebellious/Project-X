@@ -54,7 +54,7 @@ class Player():
         else:
             self.window.entities.append(
                 Entity(self.window, self.center_x, self.center_y+(self.height/2), 15, 5, -20, 0, self.color))
-    
+
     def updatePosjson(self):
         with open("code\\playerPositions.json", "r+") as f:
             data = json.load(f)
