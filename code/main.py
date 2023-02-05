@@ -2,7 +2,7 @@ import json
 import os
 import threading
 import arcade
-from entities import Player, Entity
+from entities import Player
 
 WINDOW_X = 1920
 WINDOW_Y = 1080
@@ -100,14 +100,23 @@ class GameWindow(arcade.Window):
     def draw_game(self):
         self.draw_level()
         self.draw_entities()
-        with open("code\\playerPositions.json","r") as playerPositions:
+        with open("code\\playerPositions.json", "r+") as playerPositions:
             playerPositions = json.load(playerPositions)
         for i in playerPositions["players"]:
             if self.player is None:
                 # find the first available player and make it the player
                 for x in playerPositions["players"]:
                     if x["visible"] == False:
-                        self.player = Player(self, x["id"], 1, 0.25, 0.5, x["name"])
+                        self.player = Player(
+                            self, x["id"], 1, 0.25, 0.5, x["name"])
+                        # set the player's position to the position of the player in the json file
+                        playerPositions["players"][x["id"]]["x"] = self.player.center_x
+                        playerPositions["players"][x["id"]]["y"] = self.player.center_y
+                        # set the player's visibility to true
+                        playerPositions["players"][x["id"]]["visible"] = True
+                        # write the changes to the json file
+                        with open("code\\playerPositions.json", "w") as f:
+                            json.dump(playerPositions, f, indent=4)
                         break
             if i["visible"]:
                 if i["id"] == self.player.id:
@@ -174,13 +183,15 @@ class GameWindow(arcade.Window):
                 self.menuItemSelected = 0
                 self.menuActive = False
                 self.gameActive = True
-                threading.Thread(target=os.system, args=("python code/server.py host",)).start()
+                threading.Thread(target=os.system, args=(
+                    "python code/server.py host",)).start()
             if self.menuItems[self.menuItemSelected] == "Join Game":
                 self.host = False
                 self.menuItemSelected = 0
                 self.menuActive = False
                 self.gameActive = True
-                threading.Thread(target=os.system, args=("python code/server.py join",)).start() 
+                threading.Thread(target=os.system, args=(
+                    "python code/server.py join",)).start()
             if self.menuItems[self.menuItemSelected] == "Controls":
                 self.menuItemSelected = 0
                 self.menuActive = False
@@ -228,5 +239,11 @@ class GameWindow(arcade.Window):
 
 
 if __name__ == "__main__":
+    with open("playerPositions.json", "r") as f:
+        playerPositions = json.load(f)
+    with open("code\\playerPositions.json", "w") as f:
+        json.dump(playerPositions, f, indent=4)
     window = GameWindow(WINDOW_X, WINDOW_X, TITLE)
     arcade.run()
+    # shtudown the server
+    os.system("taskkill /f /im python.exe")

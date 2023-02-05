@@ -1,3 +1,4 @@
+import json
 import arcade
 
 
@@ -44,14 +45,26 @@ class Player():
             self.change_y -= self.gravity
         self.center_y += self.change_y
         self.center_x += self.change_x
+        self.updatePosjson()
 
     def shoot(self):
         if self.facing == "right":
             self.window.entities.append(
-                Entity(self.window, self.center_x, self.center_y+(self.height/2), 15, 5, 20, 0, arcade.color.RED))
+                Entity(self.window, self.center_x, self.center_y+(self.height/2), 15, 5, 20, 0, self.color))
         else:
             self.window.entities.append(
-                Entity(self.window, self.center_x, self.center_y+(self.height/2), 15, 5, -20, 0, arcade.color.RED))
+                Entity(self.window, self.center_x, self.center_y+(self.height/2), 15, 5, -20, 0, self.color))
+    
+    def updatePosjson(self):
+        with open("code\\playerPositions.json", "r+") as f:
+            data = json.load(f)
+            for x in data["players"]:
+                if x["id"] == self.id:
+                    x["x"] = self.center_x
+                    x["y"] = self.center_y
+            f.seek(0)
+            json.dump(data, f, indent=4)
+            f.truncate()
 
 
 class Entity():

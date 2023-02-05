@@ -53,8 +53,12 @@ class Server:
             threading.Thread(target=self.accept).start()
         except Exception as e:
             print(e)
+        # threading.Thread(target=self.getAllPositions).start()
+
+    def getAllPositions(self):
         while True:
             try:
+                # get all the positions from the clients
                 for x in self.clientsockets:
                     x[0].send(bytes("GETPOS=", "utf-8"))
                     temp = x[0].recv(1024).decode("utf-8")
@@ -66,19 +70,54 @@ class Server:
                         f"{x[0].getpeername()} send:\nx: {temp[0]} y: {temp[1]}")
                     self.clientPositions[self.clientsockets.index(x)] = temp
                     sleep(1)
+                
+                # get all the positions and send them to the clients
+                with open("code\\playerPositions.json", "r") as f:
+                    temp = "POS="
+                    data = json.load(f)
+                    for x in data["players"]:
+                        temp += f"{x},{data['players'][x]['x']},{data['players'][x]['y']};"
+                    for x in self.clientsockets:
+                        x[0].send(bytes(temp, "utf-8"))
             except Exception as e:
                 print(e)
 
     def joinGame(self):
+        # connect to the server
         self.clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.clientsocket.connect((socket.gethostname(), 1234))
         print("Connected to server!")
         while True:
             data = self.clientsocket.recv(1024).decode("utf-8")
-            if data == "GETPOS=":
-                # self.clientsocket.send(bytes(f"POS={200},{700}", "utf-8"))
+            print(data)
+            # get all the player positions from the server
+            if data == "POS=":
+                self.clientsocket.send(bytes("GETPOS=", "utf-8"))
+                temp = self.clientsocket.recv(1024).decode("utf-8")
+                temp = temp.replace("POS=", "")
+                temp = temp.split(";")
+                for x in temp:
+                    playerData = x.split(",")
+                    print(
+                        f"Player {playerData[0]} is at x: {playerData[1]} y: {playerData[2]}")
+                    with open("code\\playerPositions.json", "r+") as f:
+                        data = json.load(f)
+                        # update the player positions
+                        data["players"][playerData[0]]["x"] = playerData[1]
+                        data["players"][playerData[0]]["y"] = playerData[2]
+                        print(data)
+                        f.seek(0)
+                        json.dump(data, f)
+                        f.truncate()
+
+            # send our player position to the server
+            elif data == "GETPOS=":
+                with open("code\\playerPositions.json", "r") as f:
+                    data = json.load(f)
+                    x = data["players"]["0"]["x"]
+                    y = data["players"]["0"]["y"]
                 self.clientsocket.send(bytes(
-                    f"POS={self.window.player.center_x},{self.window.player.center_y}", "utf-8"))
+                    f"POS={x},{y}", "utf-8"))
 
 
 if __name__ == '__main__':
