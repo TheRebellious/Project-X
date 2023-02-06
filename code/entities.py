@@ -27,8 +27,10 @@ class Player():
             self.change_y = 0
         if self.center_x + (self.width/2) > self.window._width:
             self.center_x = self.window._width - (self.width/2)
+            self.change_x = (self.change_x * -1)/2
         if self.center_x - (self.width/2) < 0:
             self.center_x = (self.width/2)
+            self.change_x = (self.change_x * -1)/2
         if self.change_x > 10:
             self.change_x = 10
         elif self.change_x < -10:

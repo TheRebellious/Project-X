@@ -170,7 +170,10 @@ class GameWindow(arcade.Window):
             if i["collision"] == True:
                 if player.center_y - (player.height/2) > i["y"] and player.center_y - (player.height/2) < i["y"] + i["height"] and player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]:
                     if player.change_y < 0:
-                        player.change_y = 0
+                        if player.change_y < -7:
+                            player.change_y = 5
+                        else:
+                            player.change_y = 0
                         player.center_y = i["y"] + i["height"]
                         player.in_air = False
                         player.on_ground = True
