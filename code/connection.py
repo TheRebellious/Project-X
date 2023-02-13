@@ -24,15 +24,7 @@ class Server:
     def accept(self):
         while True:
             try:
-                if not arcade.get_window():
-                    if self.host:
-                        self.server.close()
-                        print("Server closed!")
-                    else:
-                        self.clientsocket.close()
-                        print("Client closed!")
-                    exit()
-                # print("Waiting for connection...")
+                print("Waiting for connection...")
                 self.clientsockets.insert(0, self.server.accept())
                 self.clientPositions.insert(0, [0, 0])
                 print(
