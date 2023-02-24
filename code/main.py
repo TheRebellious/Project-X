@@ -12,7 +12,8 @@ TITLE = "Project X"
 class GameWindow(arcade.Window):
     menuActive = True
     menuItemSelected = 0
-    titlescreenItems = ["Host Game", "Join Game", "Controls", "Exit"]
+    titlescreenItems = ["Host Game", "Join Game",
+                        "Split screen", "Controls", "Exit"]
     menuItems = titlescreenItems
     server = None
 
@@ -20,6 +21,7 @@ class GameWindow(arcade.Window):
     optionsMenuItems = ["Back"]
 
     gameActive = False
+    splitScreen = False
     colorDict = {
         "grey": arcade.color.ASH_GREY,
         "aspargus": arcade.color.GRAY_ASPARAGUS,
@@ -36,6 +38,12 @@ class GameWindow(arcade.Window):
         "cyan": arcade.color.CYAN,
     }
 
+    damage = {
+        "line": 50,
+        "shotgun": 10,
+        "none": 10,
+    }
+
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         arcade.set_background_color(arcade.color.AMAZON)
@@ -45,14 +53,23 @@ class GameWindow(arcade.Window):
             "Stalingrad": "stalingrad.json",
         }
         self.entities = []
-        self.enemies = None
+        self.player2 = None
         self.player = None
 
     def on_draw(self):
-        if self.player is not None and self.gameActive:
-            self.player.update()
+        if self.splitScreen:
+            if self.player is not None and self.gameActive:
+                self.player.update()
+            if self.player2 is not None and self.gameActive:
+                self.player2.update()
             for x in self.entities:
                 x.update()
+
+        else:
+            if self.player is not None and self.gameActive:
+                self.player.update()
+                for x in self.entities:
+                    x.update()
 
         arcade.start_render()
 
@@ -64,6 +81,11 @@ class GameWindow(arcade.Window):
             self.draw_game()
             self.collisions(
                 self.player, self.level["objects"])
+            self.getEntityCollisions(self.player, self.entities)
+            if self.splitScreen:
+                self.collisions(
+                    self.player2, self.level["objects"])
+                self.getEntityCollisions(self.player2, self.entities)
         arcade.finish_render()
 
     # Draws a menu screen using arcade functions and is able to move around with the wasd keys
@@ -100,37 +122,48 @@ class GameWindow(arcade.Window):
     def draw_game(self):
         self.draw_level()
         self.draw_entities()
-        with open("code\\playerPositions.json", "r+") as playerPositions:
-            playerPositions = json.load(playerPositions)
-        for i in playerPositions["players"]:
-            if self.player is None:
-                # find the first available player and make it the player
-                for x in playerPositions["players"]:
-                    if x["visible"] == False:
-                        self.player = Player(
-                            self, x["id"], 1, 0.25, 0.5, x["name"])
-                        # set the player's position to the position of the player in the json file
-                        playerPositions["players"][x["id"]
-                                                   ]["x"] = self.player.center_x
-                        playerPositions["players"][x["id"]
-                                                   ]["y"] = self.player.center_y
-                        # set the player's visibility to true
-                        playerPositions["players"][x["id"]]["visible"] = True
-                        # write the changes to the json file
-                        with open("code\\playerPositions.json", "w") as f:
-                            json.dump(playerPositions, f, indent=4)
-                        break
-            if i["visible"]:
-                if i["id"] == self.player.id:
-                    pass
-                x = i["x"]
-                y = i["y"]
-                color = i["name"]
-                player = Player(self, i["id"], 1, 0.25, 0.5, color)
-                player.center_x = x
-                player.center_y = y
-                self.draw_player(player)
-        self.draw_player(self.player)
+        if not self.splitScreen:
+            with open("code\\playerPositions.json", "r+") as playerPositions:
+                playerPositions = json.load(playerPositions)
+            for i in playerPositions["players"]:
+                if self.player is None:
+                    # find the first available player and make it the player
+                    for x in playerPositions["players"]:
+                        if x["visible"] == False:
+                            self.player = Player(
+                                self, x["id"], 1, 0.25, 0.5, x["name"])
+                            # set the player's position to the position of the player in the json file
+                            playerPositions["players"][x["id"]
+                                                       ]["x"] = self.player.center_x
+                            playerPositions["players"][x["id"]
+                                                       ]["y"] = self.player.center_y
+                            # set the player's visibility to true
+                            playerPositions["players"][x["id"]
+                                                       ]["visible"] = True
+                            # write the changes to the json file
+                            with open("code\\playerPositions.json", "w") as f:
+                                json.dump(playerPositions, f, indent=4)
+                            break
+                if i["visible"]:
+                    if i["id"] == self.player.id:
+                        pass
+                    x = i["x"]
+                    y = i["y"]
+                    color = i["name"]
+                    player = Player(self, i["id"], 1, 0.25, 0.5, color)
+                    player.center_x = x
+                    player.center_y = y
+                    self.draw_player(player)
+            self.draw_player(self.player)
+        else:
+            if self.player is not None:
+                self.draw_player(self.player)
+            else:
+                self.player = Player(self, 0, 1, 0.25, 0.5, "red")
+            if self.player2 is not None:
+                self.draw_player(self.player2)
+            else:
+                self.player2 = Player(self, 1, 1, 0.25, 0.5, "yellow")
 
     # draws a level defined in the levels dictionary which references a json file
 
@@ -163,6 +196,16 @@ class GameWindow(arcade.Window):
             height = i.height
             color = i.color
             arcade.draw_rectangle_filled(x, y, width, height, color)
+
+    def getEntityCollisions(self, player: Player, entities: list):
+        for i in entities:
+            # print the difference between the y values of the player and the entity
+            print(i.center_y - (i.height/2) - player.center_y, i.center_y + (i.height/2) - (player.center_y+50),
+                  i.center_x - (i.width/2) - player.center_x, i.center_x + (i.width/2) - player.center_x+(player.width/2))
+            if i.center_x - (i.width/2) > player.center_x - (player.width / 2) and i.center_x + (i.width/2) < player.center_x + (player.width / 2) and i.center_y - (i.height/2) < player.center_y and i.center_y + i.height > player.center_y + (player.height / 2):
+                # print("hit")
+                player.hp -= self.damage[player.powerup]
+                self.entities.remove(i)
 
     def collisions(self, player, objects: list):
         # return the x and y speeds to make the player not collide with the objects it is colliding with
@@ -197,6 +240,12 @@ class GameWindow(arcade.Window):
                 self.gameActive = True
                 threading.Thread(target=os.system, args=(
                     "python code/connection.py join",)).start()
+            if self.menuItems[self.menuItemSelected] == "Split screen":
+                self.splitScreen = True
+                self.menuItemSelected = 0
+                self.menuActive = False
+                self.gameActive = True
+
             if self.menuItems[self.menuItemSelected] == "Controls":
                 self.menuItemSelected = 0
                 self.menuActive = False
@@ -216,6 +265,79 @@ class GameWindow(arcade.Window):
                 self.menuItemSelected -= 1
             if (key == arcade.key.S or key == arcade.key.DOWN) and self.menuItemSelected < len(self.menuItems) - 1:
                 self.menuItemSelected += 1
+        if self.gameActive and self.splitScreen:
+            if key == arcade.key.T:
+                self.player.powerupCounter = 3
+                self.player2.powerupCounter = 3
+                self.player.powerup = "line"
+                self.player2.powerup = "line"
+
+            # player 1 controls
+            if self.player is not None:
+                if key == arcade.key.W:
+                    if self.player.in_air:
+                        self.player.change_y += 12
+                    else:
+                        self.player.change_y = 10
+                elif key == arcade.key.S:
+                    if self.player.in_air:
+                        self.player.change_y -= 12
+                    else:
+                        self.player.change_y = -10
+                elif key == arcade.key.A:
+                    self.player.facing = "left"
+                    if self.player.in_air:
+                        self.player.change_x -= 12
+                    else:
+                        self.player.change_x = -10
+                elif key == arcade.key.D:
+                    self.player.facing = "right"
+                    if self.player.in_air:
+                        self.player.change_x += 12
+                    else:
+                        self.player.change_x = 10
+                elif key == arcade.key.SPACE:
+                    self.player.updatePowerup()
+                    if self.player.powerup == "line":
+                        self.player.shoot(200, 15, 7)
+                    elif self.player.powerup == "shotgun":
+                        for i in range(-20, 20, 14):
+                            self.player.shoot(5, 15, 20, i)
+                    else:
+                        self.player.shoot(5, 15, 20)
+
+            # player 2 controls
+            if self.player2 is not None:
+                if key == arcade.key.UP:
+                    if self.player2.in_air:
+                        self.player2.change_y += 12
+                    else:
+                        self.player2.change_y = 10
+                elif key == arcade.key.DOWN:
+                    if self.player2.in_air:
+                        self.player2.change_y -= 12
+                    else:
+                        self.player2.change_y = -10
+                elif key == arcade.key.LEFT:
+                    self.player2.facing = "left"
+                    if self.player2.in_air:
+                        self.player2.change_x -= 12
+                    else:
+                        self.player2.change_x = -10
+                elif key == arcade.key.RIGHT:
+                    self.player2.facing = "right"
+                    if self.player2.in_air:
+                        self.player2.change_x += 12
+                    else:
+                        self.player2.change_x = 10
+                elif key == arcade.key.ENTER:
+                    self.player2.updatePowerup()
+                    if self.player2.powerup == "line":
+                        self.player2.shoot(200, 15, 7)
+                    else:
+                        self.player2.shoot(5, 15, 20)
+
+        # multiplayer controls
         else:
             if key == arcade.key.W:
                 if self.player.in_air:
