@@ -2,6 +2,7 @@ import json
 import os
 import threading
 import arcade
+from GraphicsEngine import GraphicsEngine
 from entities import Player
 
 WINDOW_X = 1920
@@ -19,7 +20,7 @@ class GameWindow(arcade.Window):
 
     optionsMenuActive = False
     optionsMenuItems = ["Back"]
-
+    graphicsEngine = None
     gameActive = False
     splitScreen = False
     colorDict = {
@@ -41,7 +42,7 @@ class GameWindow(arcade.Window):
     damage = {
         "line": 50,
         "shotgun": 10,
-        "none": 10,
+        "None": 10,
     }
 
     def __init__(self, width, height, title):
@@ -64,21 +65,23 @@ class GameWindow(arcade.Window):
                 self.player2.update()
             for x in self.entities:
                 x.update()
-
         else:
             if self.player is not None and self.gameActive:
                 self.player.update()
                 for x in self.entities:
                     x.update()
 
+        if self.graphicsEngine is None:
+            self.graphicsEngine = GraphicsEngine(self, WINDOW_X, WINDOW_Y)
+
         arcade.start_render()
 
         if self.menuActive:
-            self.draw_menu()
+            self.graphicsEngine.draw_menu()
         if self.optionsMenuActive:
-            self.draw_options_menu()
+            self.graphicsEngine.draw_options_menu()
         if self.gameActive:
-            self.draw_game()
+            self.graphicsEngine.draw_game()
             self.collisions(
                 self.player, self.level["objects"])
             self.getEntityCollisions(self.player, self.entities)
@@ -88,122 +91,16 @@ class GameWindow(arcade.Window):
                 self.getEntityCollisions(self.player2, self.entities)
         arcade.finish_render()
 
-    # Draws a menu screen using arcade functions and is able to move around with the wasd keys
-    # if the menuItem is selected, it will be highlighted
-    def draw_menu(self):
-        # draw title text
-        arcade.draw_text("Project X", WINDOW_X / 2, WINDOW_Y /
-                         2 + 200, arcade.color.WHITE, 100, anchor_x="center")
-        # draw menu items
-        for i in range(len(self.menuItems)):
-            if i == self.menuItemSelected:
-                arcade.draw_text(self.menuItems[i], WINDOW_X / 2, WINDOW_Y /
-                                 2 - 70 * i, arcade.color.WHITE, 50, anchor_x="center")
-            else:
-                arcade.draw_text(self.menuItems[i], WINDOW_X / 2, WINDOW_Y /
-                                 2 - 70 * i, arcade.color.BLACK, 50, anchor_x="center")
-
-    def draw_options_menu(self):
-        for i in range(len(self.optionsMenuItems)):
-            arcade.draw_text("WASD to move around", WINDOW_X / 2, WINDOW_Y /
-                             2 + 200, arcade.color.BLACK, 50, anchor_x="center")
-            arcade.draw_text("WS and UP and DOWN to move through menu", WINDOW_X / 2,
-                             WINDOW_Y / 2 + 100, arcade.color.BLACK, 50, anchor_x="center")
-            arcade.draw_text("ENTER to select menu item", WINDOW_X / 2,
-                             WINDOW_Y / 2, arcade.color.BLACK, 50, anchor_x="center")
-            if i == self.menuItemSelected:
-                arcade.draw_text(self.optionsMenuItems[i], WINDOW_X / 2, WINDOW_Y / 2 - (
-                    100 * i)-100, arcade.color.WHITE, 50, anchor_x="center")
-            else:
-                arcade.draw_text(self.optionsMenuItems[i], WINDOW_X / 2, WINDOW_Y / 2 - (
-                    100 * i)-100, arcade.color.BLACK, 50, anchor_x="center")
-
-    # uses a series of functions to draw the game
-    def draw_game(self):
-        self.draw_level()
-        self.draw_entities()
-        if not self.splitScreen:
-            with open("code\\playerPositions.json", "r+") as playerPositions:
-                playerPositions = json.load(playerPositions)
-            for i in playerPositions["players"]:
-                if self.player is None:
-                    # find the first available player and make it the player
-                    for x in playerPositions["players"]:
-                        if x["visible"] == False:
-                            self.player = Player(
-                                self, x["id"], 1, 0.25, 0.5, x["name"])
-                            # set the player's position to the position of the player in the json file
-                            playerPositions["players"][x["id"]
-                                                       ]["x"] = self.player.center_x
-                            playerPositions["players"][x["id"]
-                                                       ]["y"] = self.player.center_y
-                            # set the player's visibility to true
-                            playerPositions["players"][x["id"]
-                                                       ]["visible"] = True
-                            # write the changes to the json file
-                            with open("code\\playerPositions.json", "w") as f:
-                                json.dump(playerPositions, f, indent=4)
-                            break
-                if i["visible"]:
-                    if i["id"] == self.player.id:
-                        pass
-                    x = i["x"]
-                    y = i["y"]
-                    color = i["name"]
-                    player = Player(self, i["id"], 1, 0.25, 0.5, color)
-                    player.center_x = x
-                    player.center_y = y
-                    self.draw_player(player)
-            self.draw_player(self.player)
-        else:
-            if self.player is not None:
-                self.draw_player(self.player)
-            else:
-                self.player = Player(self, 0, 1, 0.25, 0.5, "red")
-            if self.player2 is not None:
-                self.draw_player(self.player2)
-            else:
-                self.player2 = Player(self, 1, 1, 0.25, 0.5, "yellow")
-
-    # draws a level defined in the levels dictionary which references a json file
-
-    def draw_level(self):
-        with open("assets\\levels\\" + self.levels["Stalingrad"]) as level:
-            self.level = json.load(level)
-        for i in self.level["objects"]:
-            x = i["x"]
-            y = i["y"]
-            width = i["width"]
-            height = i["height"]
-            arcade.draw_rectangle_filled(
-                x+(width/2), y+(height/2), width, height, self.colorDict[i["color"]])
-
-    def draw_player(self, player: Player):
-        width = player.width
-        height = player.height
-        x = player.center_x
-        y = player.center_y
-        color = player.color
-        # placeholder for the player is a box
-        arcade.draw_rectangle_filled(
-            x, y+(height/2), width, height, color)
-
-    def draw_entities(self):
-        for i in self.entities:
-            x = i.center_x
-            y = i.center_y
-            width = i.width
-            height = i.height
-            color = i.color
-            arcade.draw_rectangle_filled(x, y, width, height, color)
-
     def getEntityCollisions(self, player: Player, entities: list):
         for i in entities:
-            # print the difference between the y values of the player and the entity
-            print(i.center_y - (i.height/2) - player.center_y, i.center_y + (i.height/2) - (player.center_y+50),
-                  i.center_x - (i.width/2) - player.center_x, i.center_x + (i.width/2) - player.center_x+(player.width/2))
-            if i.center_x - (i.width/2) > player.center_x - (player.width / 2) and i.center_x + (i.width/2) < player.center_x + (player.width / 2) and i.center_y - (i.height/2) < player.center_y and i.center_y + i.height > player.center_y + (player.height / 2):
-                # print("hit")
+            # check if the entity is the player
+            if i.ownerID == player.id:
+                # if it is, continue with he next entity
+                continue
+            # check if the entity is colliding with the player
+            if i.center_x > player.center_x - (player.width / 2) and i.center_x < player.center_x + (player.width / 2) and i.center_y - (i.height/2) < player.center_y + (player.height / 2) and i.center_y + i.height > player.center_y:
+                print("hit", player.id)
+                # if the entity is colliding with the player, remove the entity and deal damage to the player
                 player.hp -= self.damage[player.powerup]
                 self.entities.remove(i)
 
@@ -271,6 +168,11 @@ class GameWindow(arcade.Window):
                 self.player2.powerupCounter = 3
                 self.player.powerup = "line"
                 self.player2.powerup = "line"
+            if key == arcade.key.Y:
+                self.player.powerupCounter = 10
+                self.player2.powerupCounter = 10
+                self.player.powerup = "shotgun"
+                self.player2.powerup = "shotgun"
 
             # player 1 controls
             if self.player is not None:
@@ -301,8 +203,8 @@ class GameWindow(arcade.Window):
                     if self.player.powerup == "line":
                         self.player.shoot(200, 15, 7)
                     elif self.player.powerup == "shotgun":
-                        for i in range(-20, 20, 14):
-                            self.player.shoot(5, 15, 20, i)
+                        for i in range(-20, 21, 20):
+                            self.player.shoot(5, 15, 20, i/10, i)
                     else:
                         self.player.shoot(5, 15, 20)
 
@@ -335,7 +237,7 @@ class GameWindow(arcade.Window):
                     if self.player2.powerup == "line":
                         self.player2.shoot(200, 15, 7)
                     else:
-                        self.player2.shoot(5, 15, 20)
+                        self.player2.shoot(5, 15, 10)
 
         # multiplayer controls
         else:
@@ -362,7 +264,11 @@ class GameWindow(arcade.Window):
                 else:
                     self.player.change_x = 10
             if key == arcade.key.SPACE:
-                self.player.shoot()
+                self.player2.updatePowerup()
+                if self.player2.powerup == "line":
+                    self.player2.shoot(200, 15, 7)
+                else:
+                    self.player2.shoot(5, 15, 20)
 
 
 if __name__ == "__main__":
