@@ -99,7 +99,6 @@ class GameWindow(arcade.Window):
                 continue
             # check if the entity is colliding with the player
             if i.center_x > player.center_x - (player.width / 2) and i.center_x < player.center_x + (player.width / 2) and i.center_y - (i.height/2) < player.center_y + (player.height / 2) and i.center_y + i.height > player.center_y:
-                print("hit", player.id)
                 # if the entity is colliding with the player, remove the entity and deal damage to the player
                 player.hp -= self.damage[player.powerup]
                 self.entities.remove(i)
@@ -236,8 +235,11 @@ class GameWindow(arcade.Window):
                     self.player2.updatePowerup()
                     if self.player2.powerup == "line":
                         self.player2.shoot(200, 15, 7)
+                    elif self.player2.powerup == "shotgun":
+                        for i in range(-20, 21, 20):
+                            self.player2.shoot(5, 15, 20, i/10, i)
                     else:
-                        self.player2.shoot(5, 15, 10)
+                        self.player2.shoot(5, 15, 20)
 
         # multiplayer controls
         else:
@@ -264,11 +266,14 @@ class GameWindow(arcade.Window):
                 else:
                     self.player.change_x = 10
             if key == arcade.key.SPACE:
-                self.player2.updatePowerup()
-                if self.player2.powerup == "line":
-                    self.player2.shoot(200, 15, 7)
+                self.player.updatePowerup()
+                if self.player.powerup == "line":
+                    self.player.shoot(200, 15, 7)
+                elif self.player.powerup == "shotgun":
+                    for i in range(-20, 21, 20):
+                        self.player.shoot(5, 15, 20, i/10, i)
                 else:
-                    self.player2.shoot(5, 15, 20)
+                    self.player.shoot(5, 15, 20)
 
 
 if __name__ == "__main__":
