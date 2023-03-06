@@ -45,6 +45,8 @@ class GraphicsEngine():
     def draw_game(self):
         self.draw_level()
         self.draw_entities()
+        self.draw_powerups()
+        self.draw_scores()
         if not self.gamewindow.splitScreen:
             with open("code\\playerPositions.json", "r+") as playerPositions:
                 playerPositions = json.load(playerPositions)
@@ -83,11 +85,13 @@ class GraphicsEngine():
                 self.draw_player(self.gamewindow.player)
             else:
                 self.gamewindow.player = Player(self.gamewindow, 0, 1, 0.25, 0.5, "red")
+                self.gamewindow.scores.append(0)
             if self.gamewindow.player2 is not None:
                 self.draw_player(self.gamewindow.player2)
             else:
                 self.gamewindow.player2 = Player(
                     self.gamewindow, 1, 1, 0.25, 0.5, "yellow")
+                self.gamewindow.scores.append(0)
 
     # draws a level defined in the levels dictionary which references a json file
 
@@ -101,6 +105,12 @@ class GraphicsEngine():
             height = i["height"]
             arcade.draw_rectangle_filled(
                 x+(width/2), y+(height/2), width, height, self.gamewindow.colorDict[i["color"]])
+
+    def draw_scores(self):
+        for i in range(len(self.gamewindow.scores)):
+            arcade.draw_text(self.gamewindow.scores[len(self.gamewindow.scores)-1-i], (self.WINDOW_X / 2 - 70 * i)+45, self.WINDOW_Y -100
+                            , arcade.color.BLACK, 24, anchor_x="center")
+        
 
     def draw_player(self, player: Player):
         width = player.width
@@ -130,3 +140,19 @@ class GraphicsEngine():
             height = i.height
             color = i.color
             arcade.draw_rectangle_filled(x, y, width, height, color)
+
+    def draw_powerups(self):
+        for i in self.gamewindow.powerups:
+            if i is None:
+                self.gamewindow.powerups.remove(i)
+                continue
+            x = i.center_x
+            y = i.center_y
+            width = i.width
+            height = i.height
+            powerup = i.powerup
+            arcade.draw_rectangle_filled(x, y, width, height, arcade.color.WHITE)
+            if powerup == "shotgun":
+                arcade.draw_text("3", x, y-10, arcade.color.RED, 20, anchor_x="center")
+            elif powerup == "line":
+                arcade.draw_text("|", x, y-10, arcade.color.RED, 20, anchor_x="center")    

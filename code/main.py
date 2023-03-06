@@ -1,9 +1,10 @@
 import json
 import os
+import random
 import threading
 import arcade
 from GraphicsEngine import GraphicsEngine
-from entities import Player
+from entities import Player, PowerUp
 
 WINDOW_X = 1920
 WINDOW_Y = 1080
@@ -54,11 +55,16 @@ class GameWindow(arcade.Window):
             "Stalingrad": "stalingrad.json",
         }
         self.entities = []
+        self.powerups = []
+        self.scores = []
         self.player2 = None
         self.player = None
 
     def on_draw(self):
         if self.splitScreen:
+            if len(self.powerups) <2:
+                if random.randint(0, 100) == 1:
+                    self.powerups.append(self.createPowerup())
             if self.player is not None and self.gameActive:
                 self.player.update()
             if self.player2 is not None and self.gameActive:
@@ -85,10 +91,12 @@ class GameWindow(arcade.Window):
             self.collisions(
                 self.player, self.level["objects"])
             self.getEntityCollisions(self.player, self.entities)
+            self.getPowerUpCollisions(self.player, self.powerups)
             if self.splitScreen:
                 self.collisions(
                     self.player2, self.level["objects"])
                 self.getEntityCollisions(self.player2, self.entities)
+                self.getPowerUpCollisions(self.player2, self.powerups)
         arcade.finish_render()
 
     def getEntityCollisions(self, player: Player, entities: list):
@@ -100,9 +108,23 @@ class GameWindow(arcade.Window):
             # check if the entity is colliding with the player
             if i.center_x > player.center_x - (player.width / 2) and i.center_x < player.center_x + (player.width / 2) and i.center_y - (i.height/2) < player.center_y + (player.height / 2) and i.center_y + i.height > player.center_y:
                 # if the entity is colliding with the player, remove the entity and deal damage to the player
-                player.hp -= self.damage[player.powerup]
+                player.hp -= self.damage[i.powerup]
+                if player.hp <= 0:
+                    self.scores[i.ownerID] += 1
                 self.entities.remove(i)
 
+    def getPowerUpCollisions(self, player: Player, powerups: list):
+        for i in powerups:
+            # check if the powerup is colliding with the player
+            if i.center_x > player.center_x - (player.width / 2) and i.center_x < player.center_x + (player.width / 2) and i.center_y - (i.height/2) < player.center_y + (player.height / 2) and i.center_y + i.height > player.center_y:
+                # if the entity is colliding with the player, remove the entity and deal damage to the player
+                player.powerup = i.powerup
+                if player.powerup == "shotgun":
+                    player.powerupCounter = 10
+                elif player.powerup == "line":
+                    player.powerupCounter = 3
+                self.powerups.remove(i)
+    
     def collisions(self, player, objects: list):
         # return the x and y speeds to make the player not collide with the objects it is colliding with
         for i in objects:
@@ -119,6 +141,25 @@ class GameWindow(arcade.Window):
             else:
                 player.in_air = True
                 player.on_ground = False
+
+    def createPowerup(self):
+        powerup = PowerUp(self,0,0,50,50)
+        notcolliding = []
+        while True:
+            powerup.center_x = random.randint(0, WINDOW_X)
+            powerup.center_y = random.randint(0, WINDOW_Y)
+            for x in self.level["objects"]:
+                if powerup.center_x > x["x"] and powerup.center_x < x["x"] + x["width"] and powerup.center_y - (powerup.height/2) < x["y"] + x["height"] and powerup.center_y + powerup.height > x["y"]:
+                # if powerup.center_x - powerup.width/2 > x["x"] - x["width"]/2 and powerup.center_x + powerup.width/2 < x["x"] + x["width"]/2 and powerup.center_y - powerup.height/2 < x["y"] + x["height"]/2 and powerup.center_y + powerup.height/2 > x["y"] - x["height"]/2:
+                    notcolliding.append(False)
+                    continue
+                else:
+                    notcolliding.append(True)
+            if False in notcolliding:
+                notcolliding = []
+            else:
+                break
+        self.powerups.append(powerup)
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ENTER and self.menuActive:
@@ -200,10 +241,10 @@ class GameWindow(arcade.Window):
                 elif key == arcade.key.SPACE:
                     self.player.updatePowerup()
                     if self.player.powerup == "line":
-                        self.player.shoot(200, 15, 7)
+                        self.player.shoot(200, 15, 7, 0, 0, "line")
                     elif self.player.powerup == "shotgun":
                         for i in range(-20, 21, 20):
-                            self.player.shoot(5, 15, 20, i/10, i)
+                            self.player.shoot(5, 15, 20, i/10, i, "shotgun")
                     else:
                         self.player.shoot(5, 15, 20)
 
@@ -234,10 +275,10 @@ class GameWindow(arcade.Window):
                 elif key == arcade.key.ENTER:
                     self.player2.updatePowerup()
                     if self.player2.powerup == "line":
-                        self.player2.shoot(200, 15, 7)
+                        self.player2.shoot(200, 15, 7, 0, 0, "line")
                     elif self.player2.powerup == "shotgun":
                         for i in range(-20, 21, 20):
-                            self.player2.shoot(5, 15, 20, i/10, i)
+                            self.player2.shoot(5, 15, 20, i/10, i, "shotgun")
                     else:
                         self.player2.shoot(5, 15, 20)
 

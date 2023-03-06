@@ -1,4 +1,5 @@
 import json
+import random
 import arcade
 
 
@@ -73,13 +74,13 @@ class Player():
         if self.hp == 0:
             self.reset()
 
-    def shoot(self, height, width, speed, y_speed=0, y_offset=0):
+    def shoot(self, height, width, speed, y_speed=0, y_offset=0, powerup="None"):
         if self.facing == "right":
             self.window.entities.append(
-                Entity(self.window, self.center_x, self.center_y+(self.height/2)+y_offset, width, height, speed, y_speed, self.color, self.id))
+                Entity(self.window, self.center_x, self.center_y+(self.height/2)+y_offset, width, height, speed, y_speed, self.color, self.id, powerup))
         else:
             self.window.entities.append(
-                Entity(self.window, self.center_x, self.center_y+(self.height/2)+y_offset, width, height, speed*-1, y_speed, self.color, self.id))
+                Entity(self.window, self.center_x, self.center_y+(self.height/2)+y_offset, width, height, speed*-1, y_speed, self.color, self.id, powerup))
 
     def updatePosjson(self):
         with open("code\\playerPositions.json", "r+") as f:
@@ -101,7 +102,7 @@ class Player():
 
 class Entity():
 
-    def __init__(self, window: arcade.Window, x, y, width, height, change_x, change_y, color, ownerID) -> None:
+    def __init__(self, window: arcade.Window, x, y, width, height, change_x, change_y, color, ownerID, powerup="None") -> None:
         super().__init__()
         self.ownerID = ownerID
         self.window = window
@@ -112,9 +113,24 @@ class Entity():
         self.change_x = change_x
         self.change_y = change_y
         self.color = color
+        self.powerup = powerup
 
     def update(self):
         if self.center_x > self.window._width or self.center_x < 0:
             self.window.entities.remove(self)
         self.center_x += self.change_x
         self.center_y += self.change_y
+
+class PowerUp():
+    def __init__(self, window: arcade.Window, x, y, width, height) -> None:
+        super().__init__()
+        self.window = window
+        self.width = width
+        self.height = height
+        self.center_x = x
+        self.center_y = y
+        self.powerup = random.randint(0, 1)
+        if self.powerup == 0:
+            self.powerup = "shotgun"
+        elif self.powerup == 1:
+            self.powerup = "line" 
