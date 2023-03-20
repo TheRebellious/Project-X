@@ -1,1 +1,2 @@
-Make the Multiplayer Server actually work and stuff
+Rework the control system to clean up the code
+add modular map selection to the menu so that we can add more maps

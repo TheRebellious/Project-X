@@ -26,6 +26,20 @@ class GraphicsEngine():
                 arcade.draw_text(self.gamewindow.menuItems[i], self.WINDOW_X / 2, self.WINDOW_Y /
                                  2 - 70 * i, arcade.color.BLACK, 50, anchor_x="center")
 
+    def draw_map_select(self):
+        for x in self.gamewindow.mapSelectItems:
+            textcolor = arcade.color.BLACK
+            if self.gamewindow.mapSelectItems.index(x) == self.gamewindow.menuItemSelected:
+                textcolor = arcade.color.WHITE
+            if (self.gamewindow.mapSelectItems.index(x))>3:
+                
+                arcade.draw_text(x, (400 * (self.gamewindow.mapSelectItems.index(x)-3))-32, 1080-850, textcolor, 50, anchor_x="center")
+                self.draw_thumbnail(x, yAlignment=1080-800, xAlignment=(400 * (self.gamewindow.mapSelectItems.index(x)-3)-232), scale=0.2)
+            else:
+                arcade.draw_text(x, (400 * (self.gamewindow.mapSelectItems.index(x)+1))-32, 1080-450, textcolor, 42, anchor_x="center")
+                self.draw_thumbnail(x, yAlignment=1080-400, xAlignment=(400 * (self.gamewindow.mapSelectItems.index(x)+1)-232), scale=0.2)
+        
+
     def draw_options_menu(self):
         for i in range(len(self.gamewindow.optionsMenuItems)):
             arcade.draw_text("WASD to move around", self.WINDOW_X / 2, self.WINDOW_Y /
@@ -93,10 +107,21 @@ class GraphicsEngine():
                     self.gamewindow, 1, 1, 0.25, 0.5, "yellow")
                 self.gamewindow.scores.append(0)
 
-    # draws a level defined in the levels dictionary which references a json file
+    
+    def draw_thumbnail(self,levelstr, xAlignment=0, yAlignment=0, scale=0.2):
+        with open("assets\\levels\\" + levelstr + ".json") as level:
+            level = json.load(level)
+        for i in level["objects"]:
+            x = xAlignment + (i["x"]*scale)
+            y = yAlignment + (i["y"]*scale)
+            width = i["width"]*scale
+            height = i["height"]*scale
+            arcade.draw_rectangle_filled(
+                x+(width/2), y+(height/2), width, height, self.gamewindow.colorDict[i["color"]])
 
+    # draws a level defined in the levels dictionary which references a json file
     def draw_level(self):
-        with open("assets\\levels\\" + self.gamewindow.levels["Stalingrad"]) as level:
+        with open("assets\\levels\\" + self.gamewindow.selectedMap + ".json") as level:
             self.gamewindow.level = json.load(level)
         for i in self.gamewindow.level["objects"]:
             x = i["x"]
@@ -146,11 +171,11 @@ class GraphicsEngine():
             if i is None:
                 self.gamewindow.powerups.remove(i)
                 continue
-            x = i.center_x
-            y = i.center_y
-            width = i.width
-            height = i.height
-            powerup = i.powerup
+            x = i[0].center_x
+            y = i[0].center_y
+            width = i[0].width
+            height = i[0].height
+            powerup = i[0].powerup
             arcade.draw_rectangle_filled(x, y, width, height, arcade.color.WHITE)
             if powerup == "shotgun":
                 arcade.draw_text("3", x, y-10, arcade.color.RED, 20, anchor_x="center")

@@ -63,8 +63,6 @@ class Player():
             self.change_y -= self.gravity
         self.center_y += self.change_y
         self.center_x += self.change_x
-        if not self.window.splitScreen:
-            self.updatePosjson()
 
     def checkHP(self):
         if self.hp > 100:
@@ -81,17 +79,6 @@ class Player():
         else:
             self.window.entities.append(
                 Entity(self.window, self.center_x, self.center_y+(self.height/2)+y_offset, width, height, speed*-1, y_speed, self.color, self.id, powerup))
-
-    def updatePosjson(self):
-        with open("code\\playerPositions.json", "r+") as f:
-            data = json.load(f)
-            for x in data["players"]:
-                if x["id"] == self.id:
-                    x["x"] = self.center_x
-                    x["y"] = self.center_y
-            f.seek(0)
-            json.dump(data, f, indent=4)
-            f.truncate()
 
     def updatePowerup(self):
         if self.powerupCounter > 0:

@@ -1,7 +1,8 @@
 import json
-import os
+from os import listdir
+from os.path import isfile, join
 import random
-import threading
+import time
 import arcade
 from GraphicsEngine import GraphicsEngine
 from entities import Player, PowerUp
@@ -14,13 +15,15 @@ TITLE = "Project X"
 class GameWindow(arcade.Window):
     menuActive = True
     menuItemSelected = 0
-    titlescreenItems = ["Host Game", "Join Game",
-                        "Split screen", "Controls", "Exit"]
+    titlescreenItems = ["Split screen", "Map select", "Controls", "Exit"]
     menuItems = titlescreenItems
-    server = None
 
     optionsMenuActive = False
     optionsMenuItems = ["Back"]
+    
+    mapSelectItems = []
+    mapSelectActive = False
+    
     graphicsEngine = None
     gameActive = False
     splitScreen = False
@@ -52,30 +55,38 @@ class GameWindow(arcade.Window):
         self.set_fullscreen(True)
         self.level = None
         self.levels = {
-            "Stalingrad": "stalingrad.json",
+            "stalingrad": "stalingrad.json",
         }
         self.entities = []
         self.powerups = []
         self.scores = []
         self.player2 = None
         self.player = None
+        self.mapSelectItems = [f for f in listdir(
+            "assets\\levels\\") if f.endswith(".json")]
+        for x in self.mapSelectItems:
+            if len(x)-5 > 15:
+                self.mapSelectItems[self.mapSelectItems.index(x)] = x[:15]+"..."
+            else:
+                self.mapSelectItems[self.mapSelectItems.index(x)] = x[:-5]
+        print(self.mapSelectItems)
+        self.selectedMap = self.mapSelectItems[0]
 
     def on_draw(self):
         if self.splitScreen:
-            if len(self.powerups) <2:
+            for x in self.powerups:
+                if time.time()-x[1]>10:
+                    self.powerups.remove(x)
+                            
+            if len(self.powerups) < 2:
                 if random.randint(0, 100) == 1:
-                    self.powerups.append(self.createPowerup())
+                    self.createPowerup()
             if self.player is not None and self.gameActive:
                 self.player.update()
             if self.player2 is not None and self.gameActive:
                 self.player2.update()
             for x in self.entities:
                 x.update()
-        else:
-            if self.player is not None and self.gameActive:
-                self.player.update()
-                for x in self.entities:
-                    x.update()
 
         if self.graphicsEngine is None:
             self.graphicsEngine = GraphicsEngine(self, WINDOW_X, WINDOW_Y)
@@ -86,17 +97,21 @@ class GameWindow(arcade.Window):
             self.graphicsEngine.draw_menu()
         if self.optionsMenuActive:
             self.graphicsEngine.draw_options_menu()
+        if self.mapSelectActive:
+            self.graphicsEngine.draw_map_select()
         if self.gameActive:
             self.graphicsEngine.draw_game()
             self.collisions(
                 self.player, self.level["objects"])
             self.getEntityCollisions(self.player, self.entities)
-            self.getPowerUpCollisions(self.player, self.powerups)
+            if self.powerups != [] and self.splitScreen:
+                self.getPowerUpCollisions(self.player, self.powerups)
+                self.getPowerUpCollisions(self.player2, self.powerups)
             if self.splitScreen:
                 self.collisions(
                     self.player2, self.level["objects"])
                 self.getEntityCollisions(self.player2, self.entities)
-                self.getPowerUpCollisions(self.player2, self.powerups)
+                
         arcade.finish_render()
 
     def getEntityCollisions(self, player: Player, entities: list):
@@ -116,15 +131,15 @@ class GameWindow(arcade.Window):
     def getPowerUpCollisions(self, player: Player, powerups: list):
         for i in powerups:
             # check if the powerup is colliding with the player
-            if i.center_x > player.center_x - (player.width / 2) and i.center_x < player.center_x + (player.width / 2) and i.center_y - (i.height/2) < player.center_y + (player.height / 2) and i.center_y + i.height > player.center_y:
+            if i[0].center_x > player.center_x - (player.width / 2) and i[0].center_x < player.center_x + (player.width / 2) and i[0].center_y - (i[0].height/2) < player.center_y + (player.height / 2) and i[0].center_y + i[0].height > player.center_y:
                 # if the entity is colliding with the player, remove the entity and deal damage to the player
-                player.powerup = i.powerup
+                player.powerup = i[0].powerup
                 if player.powerup == "shotgun":
                     player.powerupCounter = 10
                 elif player.powerup == "line":
                     player.powerupCounter = 3
                 self.powerups.remove(i)
-    
+
     def collisions(self, player, objects: list):
         # return the x and y speeds to make the player not collide with the objects it is colliding with
         for i in objects:
@@ -143,14 +158,14 @@ class GameWindow(arcade.Window):
                 player.on_ground = False
 
     def createPowerup(self):
-        powerup = PowerUp(self,0,0,50,50)
+        powerup = PowerUp(self, 0, 0, 50, 50)
         notcolliding = []
         while True:
             powerup.center_x = random.randint(0, WINDOW_X)
             powerup.center_y = random.randint(0, WINDOW_Y)
             for x in self.level["objects"]:
-                if powerup.center_x > x["x"] and powerup.center_x < x["x"] + x["width"] and powerup.center_y - (powerup.height/2) < x["y"] + x["height"] and powerup.center_y + powerup.height > x["y"]:
-                # if powerup.center_x - powerup.width/2 > x["x"] - x["width"]/2 and powerup.center_x + powerup.width/2 < x["x"] + x["width"]/2 and powerup.center_y - powerup.height/2 < x["y"] + x["height"]/2 and powerup.center_y + powerup.height/2 > x["y"] - x["height"]/2:
+                if powerup.center_x < x["x"] and powerup.center_x > x["x"] + x["width"] and powerup.center_y - (powerup.height/2) > x["y"] + x["height"] and powerup.center_y + powerup.height < x["y"]:
+                    # if powerup.center_x - powerup.width/2 > x["x"] - x["width"]/2 and powerup.center_x + powerup.width/2 < x["x"] + x["width"]/2 and powerup.center_y - powerup.height/2 < x["y"] + x["height"]/2 and powerup.center_y + powerup.height/2 > x["y"] - x["height"]/2:
                     notcolliding.append(False)
                     continue
                 else:
@@ -159,29 +174,21 @@ class GameWindow(arcade.Window):
                 notcolliding = []
             else:
                 break
-        self.powerups.append(powerup)
+        self.powerups.append((powerup, time.time()))
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.ENTER and self.menuActive:
-            if self.menuItems[self.menuItemSelected] == "Host Game":
-                self.host = True
-                self.menuItemSelected = 0
-                self.menuActive = False
-                self.gameActive = True
-                threading.Thread(target=os.system, args=(
-                    "python code/connection.py host",)).start()
-            if self.menuItems[self.menuItemSelected] == "Join Game":
-                self.host = False
-                self.menuItemSelected = 0
-                self.menuActive = False
-                self.gameActive = True
-                threading.Thread(target=os.system, args=(
-                    "python code/connection.py join",)).start()
             if self.menuItems[self.menuItemSelected] == "Split screen":
                 self.splitScreen = True
                 self.menuItemSelected = 0
                 self.menuActive = False
                 self.gameActive = True
+
+            if self.menuItems[self.menuItemSelected] == "Map select":
+                self.menuItemSelected = 0
+                self.menuActive = False
+                self.mapSelectActive = True
+                self.menuItems = self.mapSelectItems
 
             if self.menuItems[self.menuItemSelected] == "Controls":
                 self.menuItemSelected = 0
@@ -196,12 +203,36 @@ class GameWindow(arcade.Window):
                 self.menuActive = True
                 self.optionsMenuActive = False
                 self.menuItems = self.titlescreenItems
+        elif key == arcade.key.ENTER and self.mapSelectActive:
+            self.selectedMap = self.menuItems[self.menuItemSelected]
+            self.menuItemSelected = 0
+            self.menuActive = True
+            self.mapSelectActive = False
+            self.menuItems = self.titlescreenItems
         # change the menu item selected
         elif self.menuActive or self.optionsMenuActive:
             if (key == arcade.key.W or key == arcade.key.UP) and self.menuItemSelected > 0:
                 self.menuItemSelected -= 1
             if (key == arcade.key.S or key == arcade.key.DOWN) and self.menuItemSelected < len(self.menuItems) - 1:
                 self.menuItemSelected += 1
+        elif self.mapSelectActive:
+            if key == arcade.key.W or key == arcade.key.UP:
+                if self.menuItemSelected > 0:
+                    self.menuItemSelected -= 4
+                    if self.menuItemSelected < 0:
+                        self.menuItemSelected = 0
+            if key == arcade.key.S or key == arcade.key.DOWN:
+                if self.menuItemSelected < len(self.menuItems) - 1:
+                    self.menuItemSelected += 4
+                    if self.menuItemSelected > len(self.menuItems) - 1:
+                        self.menuItemSelected = len(self.menuItems) - 1
+            if key == arcade.key.A or key == arcade.key.LEFT:
+                if self.menuItemSelected > 0:
+                    self.menuItemSelected -= 1
+            if key == arcade.key.D or key == arcade.key.RIGHT:
+                if self.menuItemSelected < len(self.menuItems) - 1:
+                    self.menuItemSelected += 1
+                    
         if self.gameActive and self.splitScreen:
             if key == arcade.key.T:
                 self.player.powerupCounter = 3
@@ -213,6 +244,18 @@ class GameWindow(arcade.Window):
                 self.player2.powerupCounter = 10
                 self.player.powerup = "shotgun"
                 self.player2.powerup = "shotgun"
+            if key == arcade.key.ESCAPE:
+                # go back to the menu
+                self.menuActive = True
+                self.gameActive = False
+                self.splitScreen = False
+                self.player = None
+                self.player2 = None
+                self.menuItems = self.titlescreenItems
+                self.menuItemSelected = 0
+                self.powerups = []
+                self.scores = []
+                self.entities = []
 
             # player 1 controls
             if self.player is not None:
@@ -282,40 +325,6 @@ class GameWindow(arcade.Window):
                     else:
                         self.player2.shoot(5, 15, 20)
 
-        # multiplayer controls
-        else:
-            if key == arcade.key.W:
-                if self.player.in_air:
-                    self.player.change_y += 12
-                else:
-                    self.player.change_y = 10
-            if key == arcade.key.S:
-                if self.player.in_air:
-                    self.player.change_y -= 12
-                else:
-                    self.player.change_y = -10
-            if key == arcade.key.A:
-                self.player.facing = "left"
-                if self.player.in_air:
-                    self.player.change_x -= 12
-                else:
-                    self.player.change_x = -10
-            if key == arcade.key.D:
-                self.player.facing = "right"
-                if self.player.in_air:
-                    self.player.change_x += 12
-                else:
-                    self.player.change_x = 10
-            if key == arcade.key.SPACE:
-                self.player.updatePowerup()
-                if self.player.powerup == "line":
-                    self.player.shoot(200, 15, 7)
-                elif self.player.powerup == "shotgun":
-                    for i in range(-20, 21, 20):
-                        self.player.shoot(5, 15, 20, i/10, i)
-                else:
-                    self.player.shoot(5, 15, 20)
-
 
 if __name__ == "__main__":
     with open("playerPositions.json", "r") as f:
@@ -324,5 +333,3 @@ if __name__ == "__main__":
         json.dump(playerPositions, f, indent=4)
     window = GameWindow(WINDOW_X, WINDOW_X, TITLE)
     arcade.run()
-    # shtudown the server
-    os.system("taskkill /f /im python.exe")

@@ -1,6 +1,6 @@
 {
-    "name": "Stalingrad",
-    "description": "yeah...",
+    "name": "parcour",
+    "description": "parcour",
     "version": "1.0",
     "objects": [
         {
@@ -32,26 +32,8 @@
         },
         {
             "collision": true,
-            "platform": true,
-            "x": 230,
-            "y": 600,
-            "width": 370,
-            "height": 35,
-            "color": "grey"
-        },
-        {
-            "collision": true,
-            "platform": true,
-            "x": 845,
-            "y": 600,
-            "width": 370,
-            "height": 35,
-            "color": "grey"
-        },
-        {
-            "collision": true,
             "platform": false,
-            "x": 1620,
+            "x": 1420,
             "y": 0,
             "width": 300,
             "height": 500,
