@@ -327,9 +327,5 @@ class GameWindow(arcade.Window):
 
 
 if __name__ == "__main__":
-    with open("playerPositions.json", "r") as f:
-        playerPositions = json.load(f)
-    with open("code\\playerPositions.json", "w") as f:
-        json.dump(playerPositions, f, indent=4)
     window = GameWindow(WINDOW_X, WINDOW_X, TITLE)
     arcade.run()
