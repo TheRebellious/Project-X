@@ -55,13 +55,13 @@ I'll try to explain this as much as i can:
 2. a description, just fill it in, might use it in the future.
 3. version, i have no idea why i put it in there.
 4. objects, these lil blocks get drawn from top to bottom, so the blue block first and then the green one on top.
-5.1. collision, this is easy, is your block background? no? turn it on.
-6. platform, turn it on if your block is hovering.
-7. x, left bottom of your block along the left right axis
-8. y, left bottom of your block along the up down axis, starts at the bottom
-9. width, how big is your block from left to right.
-10. height, how tall is your block.
-11. color, i'll just drop the available colors here.
+6. collision, this is easy, is your block background? no? turn it on.
+7. platform, turn it on if your block is hovering.
+8. x, left bottom of your block along the left right axis
+9. y, left bottom of your block along the up down axis, starts at the bottom
+10. width, how big is your block from left to right.
+11. height, how tall is your block.
+12. color, i'll just drop the available colors here.
 - grey
 - aspargus
 - green
@@ -75,3 +75,5 @@ I'll try to explain this as much as i can:
 - purple
 - pink
 - cyan
+13. oh boy, when you have your template json, you can yeet in in `gamedirectory\Project-X\assets\levels` 
+14. give it an actual name, boot the game, select your map and go into map preview, from here you can preview the map and it'll change in real time!
