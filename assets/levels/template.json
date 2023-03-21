@@ -1,0 +1,25 @@
+{
+    "name": "TEMPLATE",
+    "description": "TEMPLATE",
+    "version": "1.0",
+    "objects": [
+        {
+            "collision": false,
+            "platform": false,
+            "x": 0,
+            "y": 250,
+            "width": 1920,
+            "height": 830,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 0,
+            "y": 0,
+            "width": 1920,
+            "height": 250,
+            "color": "green"
+        }
+    ]
+}
