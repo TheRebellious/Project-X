@@ -25,8 +25,8 @@ I am a terrible map maker, so of course i made making custom maps way too diffic
 few steps for it, i'll leave a template for it here:
 ```
 {
-    "name": "parcour",
-    "description": "parcour",
+    "name": "template",
+    "description": "template",
     "version": "1.0",
     "objects": [
         {
