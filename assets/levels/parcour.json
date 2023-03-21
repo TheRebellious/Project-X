@@ -29,7 +29,7 @@
             "width": 350,
             "height": 400,
             "color": "grey"
-        }
+        },
         {
             "collision": true,
             "platform": false,
