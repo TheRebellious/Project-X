@@ -229,6 +229,11 @@ class GameWindow(arcade.Window):
             if (key == arcade.key.S or key == arcade.key.DOWN) and self.menuItemSelected < len(self.menuItems) - 1:
                 self.menuItemSelected += 1
         elif self.mapSelectActive:
+            if key == arcade.key.ESCAPE:
+                self.menuItemSelected = 0
+                self.menuActive = True
+                self.mapSelectActive = False
+                self.menuItems = self.titlescreenItems
             if key == arcade.key.W or key == arcade.key.UP:
                 if self.menuItemSelected > 0:
                     self.menuItemSelected -= 4
