@@ -23,7 +23,8 @@ this will install the necessary libraries
 ### MAP MODDING:
 I am a terrible map maker, so of course i made making custom maps way too difficult for the normal human.
 few steps for it, i'll leave a template for it here:
-`{
+```
+{
     "name": "parcour",
     "description": "parcour",
     "version": "1.0",
@@ -48,7 +49,7 @@ few steps for it, i'll leave a template for it here:
         }
     ]
 }
-`
+```
 This template creates a basic world with green green grass, a blue blue sky.
 I'll try to explain this as much as i can:
 1. we have a name, doesn't matter i use the filename in the game.
