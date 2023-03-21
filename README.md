@@ -19,3 +19,59 @@ if it says 3.9 goodjob, otherwise please remove the other python versions.
 7. run the `BEFORE RUNNING.bat`
 this will install the necessary libraries
 8. when this is done you can open the `Project X.bat` to open the game!
+
+### MAP MODDING:
+I am a terrible map maker, so of course i made making custom maps way too difficult for the normal human.
+few steps for it, i'll leave a template for it here:
+`{
+    "name": "parcour",
+    "description": "parcour",
+    "version": "1.0",
+    "objects": [
+        {
+            "collision": false,
+            "platform": false,
+            "x": 0,
+            "y": 250,
+            "width": 1920,
+            "height": 830,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 0,
+            "y": 0,
+            "width": 1920,
+            "height": 250,
+            "color": "green"
+        }
+    ]
+}
+`
+This template creates a basic world with green green grass, a blue blue sky.
+I'll try to explain this as much as i can:
+1. we have a name, doesn't matter i use the filename in the game.
+2. a description, just fill it in, might use it in the future.
+3. version, i have no idea why i put it in there.
+4. objects, these lil blocks get drawn from top to bottom, so the blue block first and then the green one on top.
+5.1. collision, this is easy, is your block background? no? turn it on.
+6. platform, turn it on if your block is hovering.
+7. x, left bottom of your block along the left right axis
+8. y, left bottom of your block along the up down axis, starts at the bottom
+9. width, how big is your block from left to right.
+10. height, how tall is your block.
+11. color, i'll just drop the available colors here.
+- grey
+- aspargus
+- green
+- blue
+- red
+- yellow
+- black
+- white
+- brown
+- orange
+- purple
+- pink
+- cyan
