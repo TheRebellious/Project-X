@@ -1,6 +1,4 @@
-import json
 from os import listdir
-from os.path import isfile, join
 import random
 import time
 import arcade
@@ -15,7 +13,7 @@ TITLE = "Project X"
 class GameWindow(arcade.Window):
     menuActive = True
     menuItemSelected = 0
-    titlescreenItems = ["Split screen", "Map select", "Controls", "Exit"]
+    titlescreenItems = ["Split screen", "Map select","Map preview", "Controls", "Exit"]
     menuItems = titlescreenItems
 
     optionsMenuActive = False
@@ -23,6 +21,8 @@ class GameWindow(arcade.Window):
     
     mapSelectItems = []
     mapSelectActive = False
+    
+    mapPreviewActive = False
     
     graphicsEngine = None
     gameActive = False
@@ -99,6 +99,14 @@ class GameWindow(arcade.Window):
             self.graphicsEngine.draw_options_menu()
         if self.mapSelectActive:
             self.graphicsEngine.draw_map_select()
+            arcade.draw_text("Map Select", WINDOW_X/2, WINDOW_Y-100, arcade.color.WHITE, 30, anchor_x="center")
+        if self.mapPreviewActive:
+            try:
+                arcade.draw_text("There's an error in your json", WINDOW_X/2, WINDOW_Y/2, arcade.color.BLACK, 30, anchor_x="center")
+                self.graphicsEngine.draw_level()
+                arcade.draw_text("Map Preview", WINDOW_X/2, WINDOW_Y-100, arcade.color.BLACK, 30, anchor_x="center")
+            except:
+                pass
         if self.gameActive:
             self.graphicsEngine.draw_game()
             self.collisions(
@@ -189,6 +197,11 @@ class GameWindow(arcade.Window):
                 self.menuActive = False
                 self.mapSelectActive = True
                 self.menuItems = self.mapSelectItems
+                
+            if self.menuItems[self.menuItemSelected] == "Map preview":
+                self.menuItemSelected = 0
+                self.menuActive = False
+                self.mapPreviewActive = True
 
             if self.menuItems[self.menuItemSelected] == "Controls":
                 self.menuItemSelected = 0
@@ -231,7 +244,13 @@ class GameWindow(arcade.Window):
                     self.menuItemSelected -= 1
             if key == arcade.key.D or key == arcade.key.RIGHT:
                 if self.menuItemSelected < len(self.menuItems) - 1:
-                    self.menuItemSelected += 1
+                    self.menuItemSelected += 1   
+        elif self.mapPreviewActive:
+            if key == arcade.key.ESCAPE:
+                self.menuItemSelected = 0
+                self.menuActive = True
+                self.mapPreviewActive = False
+                self.menuItems = self.titlescreenItems
                     
         if self.gameActive and self.splitScreen:
             if key == arcade.key.T:
