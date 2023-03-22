@@ -13,17 +13,18 @@ TITLE = "Project X"
 class GameWindow(arcade.Window):
     menuActive = True
     menuItemSelected = 0
-    titlescreenItems = ["Split screen", "Map select","Map preview", "Controls", "Exit"]
+    titlescreenItems = ["Split screen", "Map select",
+                        "Map preview", "Controls", "Exit"]
     menuItems = titlescreenItems
 
     optionsMenuActive = False
     optionsMenuItems = ["Back"]
-    
+
     mapSelectItems = []
     mapSelectActive = False
-    
+
     mapPreviewActive = False
-    
+
     graphicsEngine = None
     gameActive = False
     splitScreen = False
@@ -66,7 +67,8 @@ class GameWindow(arcade.Window):
             "assets\\levels\\") if f.endswith(".json")]
         for x in self.mapSelectItems:
             if len(x)-5 > 15:
-                self.mapSelectItems[self.mapSelectItems.index(x)] = x[:15]+"..."
+                self.mapSelectItems[self.mapSelectItems.index(
+                    x)] = x[:15]+"..."
             else:
                 self.mapSelectItems[self.mapSelectItems.index(x)] = x[:-5]
         print(self.mapSelectItems)
@@ -75,9 +77,9 @@ class GameWindow(arcade.Window):
     def on_draw(self):
         if self.splitScreen:
             for x in self.powerups:
-                if time.time()-x[1]>10:
+                if time.time()-x[1] > 10:
                     self.powerups.remove(x)
-                            
+
             if len(self.powerups) < 2:
                 if random.randint(0, 100) == 1:
                     self.createPowerup()
@@ -99,12 +101,15 @@ class GameWindow(arcade.Window):
             self.graphicsEngine.draw_options_menu()
         if self.mapSelectActive:
             self.graphicsEngine.draw_map_select()
-            arcade.draw_text("Map Select", WINDOW_X/2, WINDOW_Y-100, arcade.color.WHITE, 30, anchor_x="center")
+            arcade.draw_text("Map Select", WINDOW_X/2, WINDOW_Y -
+                             100, arcade.color.WHITE, 30, anchor_x="center")
         if self.mapPreviewActive:
             try:
-                arcade.draw_text("There's an error in your json", WINDOW_X/2, WINDOW_Y/2, arcade.color.BLACK, 30, anchor_x="center")
+                arcade.draw_text("There's an error in your json", WINDOW_X/2,
+                                 WINDOW_Y/2, arcade.color.BLACK, 30, anchor_x="center")
                 self.graphicsEngine.draw_level()
-                arcade.draw_text("Map Preview", WINDOW_X/2, WINDOW_Y-100, arcade.color.BLACK, 30, anchor_x="center")
+                arcade.draw_text("Map Preview", WINDOW_X/2, WINDOW_Y -
+                                 100, arcade.color.BLACK, 30, anchor_x="center")
             except:
                 pass
         if self.gameActive:
@@ -119,7 +124,7 @@ class GameWindow(arcade.Window):
                 self.collisions(
                     self.player2, self.level["objects"])
                 self.getEntityCollisions(self.player2, self.entities)
-                
+
         arcade.finish_render()
 
     def getEntityCollisions(self, player: Player, entities: list):
@@ -150,20 +155,50 @@ class GameWindow(arcade.Window):
 
     def collisions(self, player, objects: list):
         # return the x and y speeds to make the player not collide with the objects it is colliding with
+        frictionlist = []
         for i in objects:
             if i["collision"] == True:
-                if player.center_y - (player.height/2) > i["y"] and player.center_y - (player.height/2) < i["y"] + i["height"] and player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]:
-                    if player.change_y < 0:
-                        if player.change_y < -7:
-                            player.change_y = 5
-                        else:
-                            player.change_y = 0
-                        player.center_y = i["y"] + i["height"]
-                        player.in_air = False
-                        player.on_ground = True
-            else:
-                player.in_air = True
-                player.on_ground = False
+                if i["platform"]:
+                    if player.center_y > i["y"] and player.center_y < i["y"] + i["height"]+10 and (player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]):
+                        frictionlist.append(True)
+                        if player.change_y < 0:
+                            if player.change_y < -7:
+                                player.change_y = 5
+                            else:
+                                player.center_y = i["y"] + (i["height"])
+                                player.change_y = 0
+                    else:
+                        frictionlist.append(False)
+                else:
+                    # check if the player is colliding with the left side of the object
+                    if (player.center_x + (player.width / 2) > i["x"] and player.center_x + (player.width/2) < i["x"]+50) and (player.center_y + player.height > i["y"] and player.center_y < i["y"] + i["height"]-5):
+                        frictionlist.append(True)
+                        player.center_x = i["x"] - (player.width/2)
+                        player.change_x = 0
+                    # check if the player is colliding with the right side of the object
+                    elif (player.center_x - (player.width / 2) < i["x"]+i["width"] and player.center_x - player.width > i["x"]+i["width"]-50) and (player.center_y + player.height > i["y"] and player.center_y < i["y"] + i["height"]-5):
+                        frictionlist.append(True)
+                        player.center_x = i["x"] + \
+                            i["width"] + (player.width/2)
+                        player.change_x = 0
+                    # check if the player is colliding with the top of the object
+                    elif player.center_y > i["y"] and player.center_y < i["y"] + i["height"]+10 and (player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]):
+                        frictionlist.append(True)
+                        if player.change_y < 0:
+                            if player.change_y < -7:
+                                player.change_y = 5
+                            else:
+                                player.center_y = i["y"] + (i["height"])
+                                player.change_y = 0
+                    else:
+                        frictionlist.append(False)
+
+        if True in frictionlist:
+            player.on_ground = True
+            player.in_air = False
+        else:
+            player.on_ground = False
+            player.in_air = True
 
     def createPowerup(self):
         powerup = PowerUp(self, 0, 0, 50, 50)
@@ -197,7 +232,7 @@ class GameWindow(arcade.Window):
                 self.menuActive = False
                 self.mapSelectActive = True
                 self.menuItems = self.mapSelectItems
-                
+
             if self.menuItems[self.menuItemSelected] == "Map preview":
                 self.menuItemSelected = 0
                 self.menuActive = False
@@ -249,14 +284,14 @@ class GameWindow(arcade.Window):
                     self.menuItemSelected -= 1
             if key == arcade.key.D or key == arcade.key.RIGHT:
                 if self.menuItemSelected < len(self.menuItems) - 1:
-                    self.menuItemSelected += 1   
+                    self.menuItemSelected += 1
         elif self.mapPreviewActive:
             if key == arcade.key.ESCAPE:
                 self.menuItemSelected = 0
                 self.menuActive = True
                 self.mapPreviewActive = False
                 self.menuItems = self.titlescreenItems
-                    
+
         if self.gameActive and self.splitScreen:
             if key == arcade.key.T:
                 self.player.powerupCounter = 3

@@ -4,7 +4,7 @@ import arcade
 
 
 class Player():
-    def __init__(self, window: arcade.Window, id, scale=1, gravity=0.25, friction=0.5, color="asparagus") -> None:
+    def __init__(self, window: arcade.Window, id, scale=1, gravity=0.25, friction=0.25, color="asparagus") -> None:
         super().__init__()
         self.hp = 100
         self.powerupCounter = 0

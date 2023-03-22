@@ -7,9 +7,7 @@ Who cares, i got a buggy ass game
 Oh yeah this game will support multiplayer over TCP/IP in the future, or for normal people, you can stick your pc in a switch, connect other pc's and play together.
 
 ### HOW TO INSTALL:
-1. check if you have python 3.9 installed
-if yes, proceed to step 5.
-if no, go to step 2.
+1. check if you have python 3.9 installed. If yes, proceed to step 5. If no, go to step 2.
 2. download the installer from the latest version.
 3. execute the installer once it's downloaded.
 4. open a command prompt and type `python --version` in it, smack that enter button.
@@ -22,7 +20,7 @@ this will install the necessary libraries
 
 ### MAP MODDING:
 I am a terrible map maker, so of course i made making custom maps way too difficult for the normal human.
-few steps for it, i'll leave a template for it here:
+There are a few steps for it, i'll leave a template for it here:
 ```
 {
     "name": "template",
