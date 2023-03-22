@@ -171,12 +171,6 @@ class GameWindow(arcade.Window):
                         player.on_ground = False
                         player.in_air = True
                 else:
-                    print((player.center_x + (player.width / 2) > i["x"] and player.center_x + (player.width/2) < i["x"]+50) and (
-                        player.center_y + player.height > i["y"] and player.center_y < i["y"] + i["height"]-5))
-                    print((player.center_x - (player.width / 2) < i["x"]+i["width"] and player.center_x - player.width > i["x"]+i["width"]-50) and (
-                        player.center_y + player.height > i["y"] and player.center_y < i["y"] + i["height"]-5))
-                    print((player.center_y + (player.height / 2) > i["y"] and player.center_y + (player.height/2) < i["y"]+50) and (
-                        player.center_x + player.width > i["x"] and player.center_x < i["x"] + i["width"]-5))
                     # check if the player is colliding with the left side of the object
                     if (player.center_x + (player.width / 2) > i["x"] and player.center_x + (player.width/2) < i["x"]+50) and (player.center_y + player.height > i["y"] and player.center_y < i["y"] + i["height"]-5):
                         player.center_x = i["x"] - (player.width/2)
