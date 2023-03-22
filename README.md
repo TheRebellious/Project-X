@@ -22,7 +22,7 @@ this will install the necessary libraries
 
 ### MAP MODDING:
 I am a terrible map maker, so of course i made making custom maps way too difficult for the normal human.
-few steps for it, i'll leave a template for it here:
+There are a few steps for it, i'll leave a template for it here:
 ```
 {
     "name": "template",
