@@ -220,7 +220,7 @@ class GameWindow(arcade.Window):
         self.powerups.append((powerup, time.time()))
 
     def on_key_press(self, key, modifiers):
-        if key == arcade.key.ENTER and self.menuActive:
+        if (key == arcade.key.ENTER or key == arcade.key.SPACE) and self.menuActive:
             if self.menuItems[self.menuItemSelected] == "Split screen":
                 self.splitScreen = True
                 self.menuItemSelected = 0
@@ -245,13 +245,13 @@ class GameWindow(arcade.Window):
                 self.menuItems = self.optionsMenuItems
             if self.menuItems[self.menuItemSelected] == "Exit":
                 arcade.close_window()
-        elif key == arcade.key.ENTER and self.optionsMenuActive:
+        elif (key == arcade.key.ENTER or key == arcade.key.SPACE) and self.optionsMenuActive:
             if self.optionsMenuItems[self.menuItemSelected] == "Back":
                 self.menuItemSelected = 0
                 self.menuActive = True
                 self.optionsMenuActive = False
                 self.menuItems = self.titlescreenItems
-        elif key == arcade.key.ENTER and self.mapSelectActive:
+        elif (key == arcade.key.ENTER or key == arcade.key.SPACE) and self.mapSelectActive:
             self.selectedMap = self.menuItems[self.menuItemSelected]
             self.menuItemSelected = 0
             self.menuActive = True
