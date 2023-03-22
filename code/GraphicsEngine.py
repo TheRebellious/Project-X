@@ -182,7 +182,7 @@ class GraphicsEngine():
             width = i[0].width
             height = i[0].height
             powerup = i[0].powerup
-            arcade.draw_rectangle_filled(x, y, width, height, arcade.color.RED)
+            arcade.draw_rectangle_filled(x, y, width, height, arcade.color.WHITE)
             arcade.draw_rectangle_outline(
                 x, y, width, height, arcade.color.BLACK, 2)
             if powerup == "shotgun":
