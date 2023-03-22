@@ -155,48 +155,50 @@ class GameWindow(arcade.Window):
 
     def collisions(self, player, objects: list):
         # return the x and y speeds to make the player not collide with the objects it is colliding with
+        frictionlist = []
         for i in objects:
             if i["collision"] == True:
                 if i["platform"]:
                     if player.center_y > i["y"] and player.center_y < i["y"] + i["height"]+10 and (player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]):
+                        frictionlist.append(True)
                         if player.change_y < 0:
                             if player.change_y < -7:
                                 player.change_y = 5
                             else:
                                 player.center_y = i["y"] + (i["height"])
                                 player.change_y = 0
-                            player.in_air = False
-                            player.on_ground = True
                     else:
-                        player.on_ground = False
-                        player.in_air = True
+                        frictionlist.append(False)
                 else:
                     # check if the player is colliding with the left side of the object
                     if (player.center_x + (player.width / 2) > i["x"] and player.center_x + (player.width/2) < i["x"]+50) and (player.center_y + player.height > i["y"] and player.center_y < i["y"] + i["height"]-5):
+                        frictionlist.append(True)
                         player.center_x = i["x"] - (player.width/2)
                         player.change_x = 0
-                        player.in_air = False
-                        player.on_ground = True
                     # check if the player is colliding with the right side of the object
                     elif (player.center_x - (player.width / 2) < i["x"]+i["width"] and player.center_x - player.width > i["x"]+i["width"]-50) and (player.center_y + player.height > i["y"] and player.center_y < i["y"] + i["height"]-5):
+                        frictionlist.append(True)
                         player.center_x = i["x"] + \
                             i["width"] + (player.width/2)
                         player.change_x = 0
-                        player.in_air = False
-                        player.on_ground = True
                     # check if the player is colliding with the top of the object
                     elif player.center_y > i["y"] and player.center_y < i["y"] + i["height"]+10 and (player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]):
+                        frictionlist.append(True)
                         if player.change_y < 0:
                             if player.change_y < -7:
                                 player.change_y = 5
                             else:
                                 player.center_y = i["y"] + (i["height"])
                                 player.change_y = 0
-                            player.in_air = False
-                            player.on_ground = True
                     else:
-                        player.in_air = True
-                        player.on_ground = False
+                        frictionlist.append(False)
+
+        if True in frictionlist:
+            player.on_ground = True
+            player.in_air = False
+        else:
+            player.on_ground = False
+            player.in_air = True
 
     def createPowerup(self):
         powerup = PowerUp(self, 0, 0, 50, 50)
