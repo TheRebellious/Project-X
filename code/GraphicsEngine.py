@@ -98,13 +98,13 @@ class GraphicsEngine():
             if self.gamewindow.player is not None:
                 self.draw_player(self.gamewindow.player)
             else:
-                self.gamewindow.player = Player(self.gamewindow, 0, 1, 0.25, 0.5, "red")
+                self.gamewindow.player = Player(self.gamewindow, 0, 1, 0.25, 0.25, "red")
                 self.gamewindow.scores.append(0)
             if self.gamewindow.player2 is not None:
                 self.draw_player(self.gamewindow.player2)
             else:
                 self.gamewindow.player2 = Player(
-                    self.gamewindow, 1, 1, 0.25, 0.5, "yellow")
+                    self.gamewindow, 1, 1, 0.25, 0.25, "yellow")
                 self.gamewindow.scores.append(0)
 
     
@@ -146,6 +146,8 @@ class GraphicsEngine():
         # placeholder for the player is a box
         arcade.draw_rectangle_filled(
             x, y+(height/2), width, height, color)
+        arcade.draw_rectangle_outline(
+            x, y+(height/2), width, height, arcade.color.BLACK, 2)
         self.draw_hp_bar(player)
 
     def draw_hp_bar(self, player: Player):
