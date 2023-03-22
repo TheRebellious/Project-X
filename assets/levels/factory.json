@@ -1,0 +1,61 @@
+{
+    "name": "factory",
+    "description": "fight for child labour",
+    "version": "1.0",
+    "objects": [
+        {
+            "collision": false,
+            "platform": false,
+            "x": 0,
+            "y": 250,
+            "width": 1920,
+            "height": 830,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 0,
+            "y": 0,
+            "width": 1920,
+            "height": 250,
+            "color": "green"
+        },
+        {
+            "collision":true,
+            "platform": false,
+            "x": 1250,
+            "y": 250,
+            "width": 50,
+            "height": 500,
+            "color": "grey" 
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 1200,
+            "y": 400,
+            "width": 50,
+            "height": 50,
+            "color": "grey" 
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 500,
+            "y": 250,
+            "width": 700,
+            "height": 300,
+            "color": "grey" 
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 0,
+            "y": 220,
+            "width": 1920,
+            "height": 50,
+            "color": "grey" 
+        }
+    ]
+}

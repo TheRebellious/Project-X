@@ -158,13 +158,13 @@ class GameWindow(arcade.Window):
         for i in objects:
             if i["collision"] == True:
                 if i["platform"]:
-                    if player.center_y - (player.height/2) > i["y"] and player.center_y - (player.height/2) < i["y"] + i["height"] and player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]:
+                    if player.center_y > i["y"] and player.center_y < i["y"] + i["height"]+10 and (player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]):
                         if player.change_y < 0:
                             if player.change_y < -7:
                                 player.change_y = 5
                             else:
+                                player.center_y = i["y"] + (i["height"])
                                 player.change_y = 0
-                            player.center_y = i["y"] + i["height"]
                             player.in_air = False
                             player.on_ground = True
                     else:
@@ -185,7 +185,7 @@ class GameWindow(arcade.Window):
                         player.in_air = False
                         player.on_ground = True
                     # check if the player is colliding with the top of the object
-                    elif player.center_y - (player.height/2) > i["y"] and player.center_y - (player.height/2) < i["y"] + i["height"]+10 and (player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]):
+                    elif player.center_y > i["y"] and player.center_y < i["y"] + i["height"]+10 and (player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]):
                         if player.change_y < 0:
                             if player.change_y < -7:
                                 player.change_y = 5
@@ -197,7 +197,6 @@ class GameWindow(arcade.Window):
                     else:
                         player.in_air = True
                         player.on_ground = False
-                    print(player.in_air, player.on_ground)
 
     def createPowerup(self):
         powerup = PowerUp(self, 0, 0, 50, 50)
