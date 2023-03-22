@@ -31,14 +31,17 @@ class GraphicsEngine():
             textcolor = arcade.color.BLACK
             if self.gamewindow.mapSelectItems.index(x) == self.gamewindow.menuItemSelected:
                 textcolor = arcade.color.WHITE
-            if (self.gamewindow.mapSelectItems.index(x))>3:
-                
-                arcade.draw_text(x, (400 * (self.gamewindow.mapSelectItems.index(x)-3))-32, 1080-850, textcolor, 50, anchor_x="center")
-                self.draw_thumbnail(x, yAlignment=1080-800, xAlignment=(400 * (self.gamewindow.mapSelectItems.index(x)-3)-232), scale=0.2)
+            if (self.gamewindow.mapSelectItems.index(x)) > 3:
+
+                arcade.draw_text(x, (400 * (self.gamewindow.mapSelectItems.index(x)-3)
+                                     )-32, 1080-850, textcolor, 50, anchor_x="center")
+                self.draw_thumbnail(x, yAlignment=1080-800, xAlignment=(
+                    400 * (self.gamewindow.mapSelectItems.index(x)-3)-232), scale=0.2)
             else:
-                arcade.draw_text(x, (400 * (self.gamewindow.mapSelectItems.index(x)+1))-32, 1080-450, textcolor, 42, anchor_x="center")
-                self.draw_thumbnail(x, yAlignment=1080-400, xAlignment=(400 * (self.gamewindow.mapSelectItems.index(x)+1)-232), scale=0.2)
-        
+                arcade.draw_text(x, (400 * (self.gamewindow.mapSelectItems.index(x)+1)
+                                     )-32, 1080-450, textcolor, 42, anchor_x="center")
+                self.draw_thumbnail(x, yAlignment=1080-400, xAlignment=(
+                    400 * (self.gamewindow.mapSelectItems.index(x)+1)-232), scale=0.2)
 
     def draw_options_menu(self):
         for i in range(len(self.gamewindow.optionsMenuItems)):
@@ -98,7 +101,8 @@ class GraphicsEngine():
             if self.gamewindow.player is not None:
                 self.draw_player(self.gamewindow.player)
             else:
-                self.gamewindow.player = Player(self.gamewindow, 0, 1, 0.25, 0.5, "red")
+                self.gamewindow.player = Player(
+                    self.gamewindow, 0, 1, 0.25, 0.25, "red")
                 self.gamewindow.scores.append(0)
             if self.gamewindow.player2 is not None:
                 self.draw_player(self.gamewindow.player2)
@@ -107,8 +111,7 @@ class GraphicsEngine():
                     self.gamewindow, 1, 1, 0.25, 0.5, "yellow")
                 self.gamewindow.scores.append(0)
 
-    
-    def draw_thumbnail(self,levelstr, xAlignment=0, yAlignment=0, scale=0.2):
+    def draw_thumbnail(self, levelstr, xAlignment=0, yAlignment=0, scale=0.2):
         with open("assets\\levels\\" + levelstr + ".json") as level:
             level = json.load(level)
         for i in level["objects"]:
@@ -133,9 +136,8 @@ class GraphicsEngine():
 
     def draw_scores(self):
         for i in range(len(self.gamewindow.scores)):
-            arcade.draw_text(self.gamewindow.scores[len(self.gamewindow.scores)-1-i], (self.WINDOW_X / 2 - 70 * i)+45, self.WINDOW_Y -100
-                            , arcade.color.BLACK, 24, anchor_x="center")
-        
+            arcade.draw_text(self.gamewindow.scores[len(self.gamewindow.scores)-1-i], (self.WINDOW_X /
+                             2 - 70 * i)+45, self.WINDOW_Y - 100, arcade.color.BLACK, 24, anchor_x="center")
 
     def draw_player(self, player: Player):
         width = player.width
@@ -153,7 +155,7 @@ class GraphicsEngine():
         y = player.center_y
         color = player.color
         # draw the outline of the hp bar
-        arcade.draw_rectangle_outline(x, y-10, 60, 10, arcade.color.BLACK)
+        arcade.draw_rectangle_outline(x, y-10, 60, 10, arcade.color.BLACK, 2)
         # fill in the hp bar
         arcade.draw_rectangle_filled(x, y-10, 60*(player.hp/100), 10, color)
 
@@ -165,6 +167,8 @@ class GraphicsEngine():
             height = i.height
             color = i.color
             arcade.draw_rectangle_filled(x, y, width, height, color)
+            arcade.draw_rectangle_outline(
+                x, y, width, height, arcade.color.BLACK, 2)
 
     def draw_powerups(self):
         for i in self.gamewindow.powerups:
@@ -176,8 +180,12 @@ class GraphicsEngine():
             width = i[0].width
             height = i[0].height
             powerup = i[0].powerup
-            arcade.draw_rectangle_filled(x, y, width, height, arcade.color.WHITE)
+            arcade.draw_rectangle_filled(x, y, width, height, arcade.color.RED)
+            arcade.draw_rectangle_outline(
+                x, y, width, height, arcade.color.BLACK, 2)
             if powerup == "shotgun":
-                arcade.draw_text("3", x, y-10, arcade.color.RED, 20, anchor_x="center")
+                arcade.draw_text("3", x, y-10, arcade.color.RED,
+                                 20, anchor_x="center")
             elif powerup == "line":
-                arcade.draw_text("|", x, y-10, arcade.color.RED, 20, anchor_x="center")    
+                arcade.draw_text("|", x, y-10, arcade.color.RED,
+                                 20, anchor_x="center")
