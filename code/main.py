@@ -4,6 +4,7 @@ import time
 import arcade
 from GraphicsEngine import GraphicsEngine
 from entities import Player, PowerUp
+from controlHandler import MenuController, PlayerController
 
 WINDOW_X = 1920
 WINDOW_Y = 1080
@@ -11,6 +12,7 @@ TITLE = "Project X"
 
 
 class GameWindow(arcade.Window):
+    menuController = None
     menuActive = True
     menuItemSelected = 0
     titlescreenItems = ["Split screen", "Map select",
@@ -61,8 +63,11 @@ class GameWindow(arcade.Window):
         self.entities = []
         self.powerups = []
         self.scores = []
-        self.player2 = None
         self.player = None
+        self.playerController = None
+        self.player2 = None
+        self.player2Controller = None
+
         self.mapSelectItems = [f for f in listdir(
             "assets\\levels\\") if f.endswith(".json")]
         for x in self.mapSelectItems:
@@ -220,7 +225,10 @@ class GameWindow(arcade.Window):
         self.powerups.append((powerup, time.time()))
 
     def on_key_press(self, key, modifiers):
-        if (key == arcade.key.ENTER or key == arcade.key.SPACE) and self.menuActive:
+        if self.menuController is None:
+            self.menuController = MenuController(self, [(arcade.key.W, "up"), (arcade.key.S, "down"), (
+                arcade.key.A, "left"), (arcade.key.D, "right"), (arcade.key.ENTER, "enter"), (arcade.key.ESCAPE, "back")])
+        if key == self.menuController.controlDict["select"] and self.menuActive:
             if self.menuItems[self.menuItemSelected] == "Split screen":
                 self.splitScreen = True
                 self.menuItemSelected = 0
@@ -245,13 +253,13 @@ class GameWindow(arcade.Window):
                 self.menuItems = self.optionsMenuItems
             if self.menuItems[self.menuItemSelected] == "Exit":
                 arcade.close_window()
-        elif (key == arcade.key.ENTER or key == arcade.key.SPACE) and self.optionsMenuActive:
+        elif key == self.menuController.controlDict["select"] and self.optionsMenuActive:
             if self.optionsMenuItems[self.menuItemSelected] == "Back":
                 self.menuItemSelected = 0
                 self.menuActive = True
                 self.optionsMenuActive = False
                 self.menuItems = self.titlescreenItems
-        elif (key == arcade.key.ENTER or key == arcade.key.SPACE) and self.mapSelectActive:
+        elif key == self.menuController.controlDict["select"] and self.mapSelectActive:
             self.selectedMap = self.menuItems[self.menuItemSelected]
             self.menuItemSelected = 0
             self.menuActive = True
@@ -259,51 +267,24 @@ class GameWindow(arcade.Window):
             self.menuItems = self.titlescreenItems
         # change the menu item selected
         elif self.menuActive or self.optionsMenuActive:
-            if (key == arcade.key.W or key == arcade.key.UP) and self.menuItemSelected > 0:
-                self.menuItemSelected -= 1
-            if (key == arcade.key.S or key == arcade.key.DOWN) and self.menuItemSelected < len(self.menuItems) - 1:
-                self.menuItemSelected += 1
+            self.menuController.handle_input(key)
         elif self.mapSelectActive:
-            if key == arcade.key.ESCAPE:
+            if key == self.menuController.controlDict["back"]:
                 self.menuItemSelected = 0
                 self.menuActive = True
                 self.mapSelectActive = False
                 self.menuItems = self.titlescreenItems
-            if key == arcade.key.W or key == arcade.key.UP:
-                if self.menuItemSelected > 0:
-                    self.menuItemSelected -= 4
-                    if self.menuItemSelected < 0:
-                        self.menuItemSelected = 0
-            if key == arcade.key.S or key == arcade.key.DOWN:
-                if self.menuItemSelected < len(self.menuItems) - 1:
-                    self.menuItemSelected += 4
-                    if self.menuItemSelected > len(self.menuItems) - 1:
-                        self.menuItemSelected = len(self.menuItems) - 1
-            if key == arcade.key.A or key == arcade.key.LEFT:
-                if self.menuItemSelected > 0:
-                    self.menuItemSelected -= 1
-            if key == arcade.key.D or key == arcade.key.RIGHT:
-                if self.menuItemSelected < len(self.menuItems) - 1:
-                    self.menuItemSelected += 1
+            else:
+                self.menuController.handle_input(key)
         elif self.mapPreviewActive:
-            if key == arcade.key.ESCAPE:
+            if key == self.menuController.controlDict["back"]:
                 self.menuItemSelected = 0
                 self.menuActive = True
                 self.mapPreviewActive = False
                 self.menuItems = self.titlescreenItems
 
         if self.gameActive and self.splitScreen:
-            if key == arcade.key.T:
-                self.player.powerupCounter = 3
-                self.player2.powerupCounter = 3
-                self.player.powerup = "line"
-                self.player2.powerup = "line"
-            if key == arcade.key.Y:
-                self.player.powerupCounter = 10
-                self.player2.powerupCounter = 10
-                self.player.powerup = "shotgun"
-                self.player2.powerup = "shotgun"
-            if key == arcade.key.ESCAPE:
+            if key == self.menuController.controlDict["back"]:
                 # go back to the menu
                 self.menuActive = True
                 self.gameActive = False
@@ -317,72 +298,24 @@ class GameWindow(arcade.Window):
                 self.entities = []
 
             # player 1 controls
-            if self.player is not None:
-                if key == arcade.key.W:
-                    if self.player.in_air:
-                        self.player.change_y += 12
-                    else:
-                        self.player.change_y = 10
-                elif key == arcade.key.S:
-                    if self.player.in_air:
-                        self.player.change_y -= 12
-                    else:
-                        self.player.change_y = -10
-                elif key == arcade.key.A:
-                    self.player.facing = "left"
-                    if self.player.in_air:
-                        self.player.change_x -= 12
-                    else:
-                        self.player.change_x = -10
-                elif key == arcade.key.D:
-                    self.player.facing = "right"
-                    if self.player.in_air:
-                        self.player.change_x += 12
-                    else:
-                        self.player.change_x = 10
-                elif key == arcade.key.SPACE:
-                    self.player.updatePowerup()
-                    if self.player.powerup == "line":
-                        self.player.shoot(200, 15, 7, 0, 0, "line")
-                    elif self.player.powerup == "shotgun":
-                        for i in range(-20, 21, 20):
-                            self.player.shoot(5, 15, 20, i/10, i, "shotgun")
-                    else:
-                        self.player.shoot(5, 15, 20)
+            if self.playerController is not None:
+                if self.player is not None:
+                    print("player 1")
+                    self.playerController.handle_input(key)
+            else:
+                if self.player is not None:
+                    self.playerController = PlayerController(self, self.player, [(
+                        arcade.key.W, "up"), (arcade.key.S, "down"), (arcade.key.A, "left"), (arcade.key.D, "right"), (arcade.key.SPACE, "shoot")])
 
             # player 2 controls
-            if self.player2 is not None:
-                if key == arcade.key.UP:
-                    if self.player2.in_air:
-                        self.player2.change_y += 12
-                    else:
-                        self.player2.change_y = 10
-                elif key == arcade.key.DOWN:
-                    if self.player2.in_air:
-                        self.player2.change_y -= 12
-                    else:
-                        self.player2.change_y = -10
-                elif key == arcade.key.LEFT:
-                    self.player2.facing = "left"
-                    if self.player2.in_air:
-                        self.player2.change_x -= 12
-                    else:
-                        self.player2.change_x = -10
-                elif key == arcade.key.RIGHT:
-                    self.player2.facing = "right"
-                    if self.player2.in_air:
-                        self.player2.change_x += 12
-                    else:
-                        self.player2.change_x = 10
-                elif key == arcade.key.ENTER:
-                    self.player2.updatePowerup()
-                    if self.player2.powerup == "line":
-                        self.player2.shoot(200, 15, 7, 0, 0, "line")
-                    elif self.player2.powerup == "shotgun":
-                        for i in range(-20, 21, 20):
-                            self.player2.shoot(5, 15, 20, i/10, i, "shotgun")
-                    else:
-                        self.player2.shoot(5, 15, 20)
+            if self.player2Controller is not None:
+                if self.player2 is not None:
+                    print("player 2")
+                    self.player2Controller.handle_input(key)
+            else:
+                if self.player2 is not None:
+                    self.player2Controller = PlayerController(self, self.player2, [(
+                        arcade.key.UP, "up"), (arcade.key.DOWN, "down"), (arcade.key.LEFT, "left"), (arcade.key.RIGHT, "right"), (arcade.key.ENTER, "shoot")])
 
 
 if __name__ == "__main__":
