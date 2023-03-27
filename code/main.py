@@ -300,7 +300,6 @@ class GameWindow(arcade.Window):
             # player 1 controls
             if self.playerController is not None:
                 if self.player is not None:
-                    print("player 1")
                     self.playerController.handle_input(key)
             else:
                 if self.player is not None:
@@ -310,7 +309,6 @@ class GameWindow(arcade.Window):
             # player 2 controls
             if self.player2Controller is not None:
                 if self.player2 is not None:
-                    print("player 2")
                     self.player2Controller.handle_input(key)
             else:
                 if self.player2 is not None:

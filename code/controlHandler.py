@@ -3,16 +3,16 @@ from entities import Player
 
 
 class MenuController:
-    controlDict = {
-        "up": arcade.key.W,
-        "down": arcade.key.S,
-        "left": arcade.key.A,
-        "right": arcade.key.D,
-        "select": arcade.key.ENTER,
-        "back": arcade.key.ESCAPE,
-    }
 
     def __init__(self, gamewindow: arcade.Window, controls: list):
+        self.controlDict = {
+            "up": arcade.key.W,
+            "down": arcade.key.S,
+            "left": arcade.key.A,
+            "right": arcade.key.D,
+            "select": arcade.key.ENTER,
+            "back": arcade.key.ESCAPE,
+        }
         # controls is a list of tuples, each tuple is a key and a short string of what to do
         self.controls = controls
         self.gamewindow = gamewindow
@@ -29,7 +29,8 @@ class MenuController:
             elif key == self.controlDict["down"]:
                 self.gamewindow.menuItemSelected += 4
                 if self.gamewindow.menuItemSelected > len(self.gamewindow.mapSelectItems)-1:
-                    self.gamewindow.menuItemSelected = len(self.gamewindow.mapSelectItems)-1
+                    self.gamewindow.menuItemSelected = len(
+                        self.gamewindow.mapSelectItems)-1
             elif key == self.controlDict["left"]:
                 if self.gamewindow.menuItemSelected > 0:
                     self.gamewindow.menuItemSelected -= 1
@@ -47,15 +48,14 @@ class MenuController:
 
 
 class PlayerController:
-    controlDict = {
-        "up": arcade.key.W,
-        "down": arcade.key.S,
-        "left": arcade.key.A,
-        "right": arcade.key.D,
-        "shoot": arcade.key.SPACE,
-    }
-
     def __init__(self, gamewindow: arcade.Window, player: Player,  controls: list):
+        self.controlDict = {
+            "up": arcade.key.W,
+            "down": arcade.key.S,
+            "left": arcade.key.A,
+            "right": arcade.key.D,
+            "shoot": arcade.key.SPACE,
+        }
         self.controls = controls
         self.gamewindow = gamewindow
         self.player = player
@@ -67,7 +67,6 @@ class PlayerController:
                 self.controlDict[x[1]] = x[0]
 
     def handle_input(self, key):
-        print(self.controlDict)
         if key == self.controlDict["up"]:
             if self.player.in_air:
                 self.player.change_y += 12
