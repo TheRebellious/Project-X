@@ -291,6 +291,8 @@ class GameWindow(arcade.Window):
                 self.splitScreen = False
                 self.player = None
                 self.player2 = None
+                self.playerController = None
+                self.player2Controller = None
                 self.menuItems = self.titlescreenItems
                 self.menuItemSelected = 0
                 self.powerups = []
