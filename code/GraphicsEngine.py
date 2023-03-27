@@ -1,5 +1,6 @@
 import json
 import arcade
+from controlHandler import PlayerController
 from entities import Player
 
 
