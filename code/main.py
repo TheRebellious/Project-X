@@ -134,12 +134,18 @@ class GameWindow(arcade.Window):
 
     def getEntityCollisions(self, player: Player, entities: list):
         for i in entities:
+            collided = False
             # check if the entity is the player
             if i.ownerID == player.id:
                 # if it is, continue with he next entity
                 continue
-            # check if the entity is colliding with the player
-            if i.center_x > player.center_x - (player.width / 2) and i.center_x < player.center_x + (player.width / 2) and i.center_y - (i.height/2) < player.center_y + (player.height / 2) and i.center_y + i.height > player.center_y:
+            # check if the player is colliding with the left side of the entity
+            if (player.center_x + (player.width / 2) > i.__dict__["center_x"] and player.center_x + (player.width/2) < i.__dict__["center_x"]+50) and (player.center_y + player.height > i.__dict__["center_y"] and player.center_y < i.__dict__["center_y"] + i.__dict__["height"]-5):
+                collided = True
+            # check if the player is colliding with the right side of the entity
+            elif (player.center_x - (player.width / 2) < i.__dict__["center_x"]+i.__dict__["width"] and player.center_x - player.width > i.__dict__["center_x"]+i.__dict__["width"]-50) and (player.center_y + player.height > i.__dict__["center_y"] and player.center_y < i.__dict__["center_y"] + i.__dict__["height"]-5):
+                collided = True
+            if collided:
                 # if the entity is colliding with the player, remove the entity and deal damage to the player
                 player.hp -= self.damage[i.powerup]
                 if player.hp <= 0:
@@ -158,7 +164,7 @@ class GameWindow(arcade.Window):
                     player.powerupCounter = 3
                 self.powerups.remove(i)
 
-    def collisions(self, player, objects: list):
+    def collisions(self, player: Player, objects: list):
         # return the x and y speeds to make the player not collide with the objects it is colliding with
         frictionlist = []
         for i in objects:
