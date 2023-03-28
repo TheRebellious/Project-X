@@ -1,0 +1,79 @@
+{
+    "name": "Multilevel",
+    "description": "A simple example of a multilevel game.",
+    "version": "1.0",
+    "objects": [
+        {
+            "collision": false,
+            "platform": false,
+            "x": 0,
+            "y": 150,
+            "width": 480,
+            "height": 930,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 0,
+            "y": 0,
+            "width": 480,
+            "height": 150,
+            "color": "green"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 480,
+            "y": 200,
+            "width": 480,
+            "height": 880,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 480,
+            "y": 0,
+            "width": 480,
+            "height": 200,
+            "color": "green"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 960,
+            "y": 250,
+            "width": 480,
+            "height": 830,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 960,
+            "y": 0,
+            "width": 480,
+            "height": 250,
+            "color": "green"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 1440,
+            "y": 100,
+            "width": 480,
+            "height": 980,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 1440,
+            "y": 0,
+            "width": 480,
+            "height": 100,
+            "color": "green"
+        }
+    ]
+}
