@@ -1,0 +1,214 @@
+{
+    "name": "Multilevel",
+    "description": "A simple example of a multilevel game.",
+    "version": "1.0",
+    "objects": [
+        {
+            "collision": false,
+            "platform": false,
+            "x": 0,
+            "y": 150,
+            "width": 480,
+            "height": 930,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 0,
+            "y": 0,
+            "width": 480,
+            "height": 150,
+            "color": "green"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 480,
+            "y": 200,
+            "width": 480,
+            "height": 880,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 480,
+            "y": 0,
+            "width": 480,
+            "height": 200,
+            "color": "green"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 960,
+            "y": 250,
+            "width": 480,
+            "height": 830,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 960,
+            "y": 0,
+            "width": 480,
+            "height": 250,
+            "color": "green"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 1440,
+            "y": 100,
+            "width": 480,
+            "height": 980,
+            "color": "blue"
+        },
+        {
+            "collision": true,
+            "platform": false,
+            "x": 1440,
+            "y": 0,
+            "width": 480,
+            "height": 100,
+            "color": "green"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 1440,
+            "y": 100,
+            "width": 480,
+            "height": 140,
+            "color": "brown"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 540,
+            "y": 800,
+            "width": 240,
+            "height": 60,
+            "color": "white"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 560,
+            "y": 780,
+            "width": 140,
+            "height": 80,
+            "color": "white"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 600,
+            "y": 800,
+            "width": 40,
+            "height": 80,
+            "color": "white"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 1240,
+            "y": 840,
+            "width": 240,
+            "height": 60,
+            "color": "white"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 1300,
+            "y": 840,
+            "width": 140,
+            "height": 80,
+            "color": "white"
+        },
+        {
+            "collision": false,
+            "platform": false,
+            "x": 1260,
+            "y": 820,
+            "width": 40,
+            "height": 80,
+            "color": "white"
+        },
+        {
+            "collision": false,
+            "platform": true,
+            "x": 975,
+            "y": 500,
+            "width": 75,
+            "height": 175,
+            "color": "aspargus"
+        },
+        {
+            "collision": true,
+            "platform": true,
+            "x": 900,
+            "y": 550,
+            "width": 350,
+            "height": 80,
+            "color": "grey"
+        },
+        {
+            "collision": false,
+            "platform": true,
+            "x": 975,
+            "y": 415,
+            "width": 75,
+            "height": 175,
+            "color": "aspargus"
+        },
+        {
+            "collision": false,
+            "platform": true,
+            "x": 950,
+            "y": 590,
+            "width": 75,
+            "height": 50,
+            "color": "white"
+        },
+        {
+            "collision": false,
+            "platform": true,
+            "x": 1200,
+            "y": 610,
+            "width": 50,
+            "height": 75,
+            "color": "aspargus"
+        },
+        {
+            "collision": false,
+            "platform": true,
+            "x": 1300,
+            "y": 565,
+            "width": 60,
+            "height": 40,
+            "color": "orange"
+        },
+        {
+            "collision": false,
+            "platform": true,
+            "x": 1250,
+            "y": 560,
+            "width": 60,
+            "height": 50,
+            "color": "orange"
+        },
+        {
+            "collision": false,
+            "platform": true,
+            "x": 1250,
+            "y": 555,
+            "width": 5,
+            "height": 60,
+            "color": "black"
+        }
+    ]
+}
