@@ -154,9 +154,16 @@ class GameWindow(arcade.Window):
 
     def getPowerUpCollisions(self, player: Player, powerups: list):
         for i in powerups:
+            collided = False
             # check if the powerup is colliding with the player
-            if i[0].center_x > player.center_x - (player.width / 2) and i[0].center_x < player.center_x + (player.width / 2) and i[0].center_y - (i[0].height/2) < player.center_y + (player.height / 2) and i[0].center_y + i[0].height > player.center_y:
-                # if the entity is colliding with the player, remove the entity and deal damage to the player
+            if (player.center_x + (player.width / 2) > i[0].__dict__["center_x"] and player.center_x + (player.width/2) < i[0].__dict__["center_x"]+50) and (player.center_y + player.height > i[0].__dict__["center_y"]-(i[0].__dict__["height"]/2) and player.center_y < i[0].__dict__["center_y"] + (i[0].__dict__["height"]/2)):
+                collided = True
+            # check if the player is colliding with the right side of the entity
+            elif (player.center_x - (player.width / 2) < i[0].__dict__["center_x"]+i[0].__dict__["width"] and player.center_x - player.width > i[0].__dict__["center_x"]+i[0].__dict__["width"]-50) and (player.center_y + player.height > i[0].__dict__["center_y"]-(i[0].__dict__["height"]/2) and player.center_y < i[0].__dict__["center_y"] + i[0].__dict__["height"]):
+                collided = True
+            # if i[0].center_x > player.center_x - (player.width / 2) and i[0].center_x < player.center_x + (player.width / 2) and i[0].center_y - (i[0].height/2) < player.center_y + (player.height / 2) and i[0].center_y + i[0].height > player.center_y:
+            #     # if the entity is colliding with the player, remove the entity and deal damage to the player
+            if collided:
                 player.powerup = i[0].powerup
                 if player.powerup == "shotgun":
                     player.powerupCounter = 10
