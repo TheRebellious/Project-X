@@ -140,10 +140,10 @@ class GameWindow(arcade.Window):
                 # if it is, continue with he next entity
                 continue
             # check if the player is colliding with the left side of the entity
-            if (player.center_x + (player.width / 2) > i.__dict__["center_x"] and player.center_x + (player.width/2) < i.__dict__["center_x"]+50) and (player.center_y + player.height > i.__dict__["center_y"] and player.center_y < i.__dict__["center_y"] + i.__dict__["height"]-5):
+            if (player.center_x + (player.width / 2) > i.__dict__["center_x"] and player.center_x + (player.width/2) < i.__dict__["center_x"]+50) and (player.center_y + player.height > i.__dict__["center_y"]-(i.__dict__["height"]/2) and player.center_y < i.__dict__["center_y"] + (i.__dict__["height"]/2)):
                 collided = True
             # check if the player is colliding with the right side of the entity
-            elif (player.center_x - (player.width / 2) < i.__dict__["center_x"]+i.__dict__["width"] and player.center_x - player.width > i.__dict__["center_x"]+i.__dict__["width"]-50) and (player.center_y + player.height > i.__dict__["center_y"] and player.center_y < i.__dict__["center_y"] + i.__dict__["height"]-5):
+            elif (player.center_x - (player.width / 2) < i.__dict__["center_x"]+i.__dict__["width"] and player.center_x - player.width > i.__dict__["center_x"]+i.__dict__["width"]-50) and (player.center_y + player.height > i.__dict__["center_y"]-(i.__dict__["height"]/2) and player.center_y < i.__dict__["center_y"] + i.__dict__["height"]):
                 collided = True
             if collided:
                 # if the entity is colliding with the player, remove the entity and deal damage to the player
