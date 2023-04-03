@@ -67,6 +67,9 @@ class GameWindow(arcade.Window):
         self.playerController = None
         self.player2 = None
         self.player2Controller = None
+        
+        self.music = arcade.Sound("assets\\music\\GameMusic.wav", streaming=True)
+        self.music.play(loop=True)
 
         self.mapSelectItems = [f for f in listdir(
             "assets\\levels\\") if f.endswith(".json")]
@@ -177,6 +180,7 @@ class GameWindow(arcade.Window):
         for i in objects:
             if i["collision"] == True:
                 if i["platform"]:
+                    # check if the player is colliding with the top of the object
                     if player.center_y > i["y"] and player.center_y < i["y"] + i["height"]+10 and (player.center_x + (player.width / 2) > i["x"] and player.center_x - (player.width / 2) < i["x"] + i["width"]):
                         frictionlist.append(True)
                         if player.change_y < 0:
