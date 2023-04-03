@@ -6,6 +6,9 @@ Who cares, i got a buggy ass game
 
 Oh yeah this game will support multiplayer over TCP/IP in the future, or for normal people, you can stick your pc in a switch, connect other pc's and play together.
 
+### Credit to [Viczen](https://bio.link/viczen) for the game music, sounds awesome!
+
+
 ### HOW TO INSTALL:
 1. check if you have python 3.9 installed. If yes, proceed to step 5. If no, go to step 2.
 2. download the installer from the latest version.
