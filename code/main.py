@@ -15,7 +15,7 @@ class GameWindow(arcade.Window):
     menuController = None
     menuActive = True
     menuItemSelected = 0
-    titlescreenItems = ["Split screen", "Map select",
+    titlescreenItems = ["Local multiplayer", "Map select",
                         "Map preview", "Controls", "Exit"]
     menuItems = titlescreenItems
 
@@ -67,8 +67,9 @@ class GameWindow(arcade.Window):
         self.playerController = None
         self.player2 = None
         self.player2Controller = None
-        
-        self.music = arcade.Sound("assets\\music\\GameMusic.wav", streaming=True)
+
+        self.music = arcade.Sound(
+            "assets\\music\\GameMusic.wav", streaming=True)
         self.music.play(loop=True)
 
         self.mapSelectItems = [f for f in listdir(
@@ -246,7 +247,7 @@ class GameWindow(arcade.Window):
             self.menuController = MenuController(self, [(arcade.key.W, "up"), (arcade.key.S, "down"), (
                 arcade.key.A, "left"), (arcade.key.D, "right"), (arcade.key.ENTER, "enter"), (arcade.key.ESCAPE, "back")])
         if key == self.menuController.controlDict["select"] and self.menuActive:
-            if self.menuItems[self.menuItemSelected] == "Split screen":
+            if self.menuItems[self.menuItemSelected] == "Local multiplayer":
                 self.splitScreen = True
                 self.menuItemSelected = 0
                 self.menuActive = False

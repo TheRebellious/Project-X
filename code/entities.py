@@ -108,6 +108,7 @@ class Entity():
         self.center_x += self.change_x
         self.center_y += self.change_y
 
+
 class PowerUp():
     def __init__(self, window: arcade.Window, x, y, width, height) -> None:
         super().__init__()
@@ -120,4 +121,4 @@ class PowerUp():
         if self.powerup == 0:
             self.powerup = "shotgun"
         elif self.powerup == 1:
-            self.powerup = "line" 
+            self.powerup = "line"
