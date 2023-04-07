@@ -10,16 +10,9 @@ Oh yeah this game will support multiplayer over TCP/IP in the future, or for nor
 
 
 ### HOW TO INSTALL:
-1. check if you have python 3.9 installed. If yes, proceed to step 5. If no, go to step 2.
-2. download the installer from the latest version.
-3. execute the installer once it's downloaded.
-4. open a command prompt and type `python --version` in it, smack that enter button.
-if it says 3.9 goodjob, otherwise please remove the other python versions.
-5. download the actual game from the latest release.
+5. download the game from the latest release.
 6. unzip the zip file
-7. run the `BEFORE RUNNING.bat`
-this will install the necessary libraries
-8. when this is done you can open the `Project X.bat` to open the game!
+8. when this is done you can open `Project-X.exe` to open the game!
 
 ### MAP MODDING:
 I am a terrible map maker, so of course i made making custom maps way too difficult for the normal human.
