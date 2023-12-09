@@ -3,5 +3,6 @@ Game Settings menu
 - json storage of settings
 - Window settings
 - flight/double jump toggle
-- menu to change all variables for player entities
+- menu to change all variables for
+  player entities
 - damage modifier

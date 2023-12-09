@@ -23,6 +23,9 @@ class GameWindow(arcade.Window):
     optionsMenuActive = False
     optionsMenuItems = ["Back"]
 
+    gameMenuActive = False
+    gameMenuItems = ["Window Settings", "Game Variables"]
+
     mapSelectItems = []
     mapSelectActive = False
 
@@ -53,15 +56,13 @@ class GameWindow(arcade.Window):
         "None": 10,
     }
 
-    def __init__(self, width, height, fullscreen, title):
-        super().__init__(width, height, title)
+    def __init__(self, settings: dict):
+        super().__init__(settings["WindowSettings"]["Width"], settings["WindowSettings"]["Height"], "Project X")
         arcade.set_background_color(arcade.color.AMAZON)
-        self.set_size(width, height)
-        self.set_fullscreen(fullscreen)
+        self.settings = settings
+        self.set_size(self.settings["WindowSettings"]["Width"], settings["WindowSettings"]["Height"])
+        self.set_fullscreen(settings["WindowSettings"]["Fullscreen"])
         self.level = None
-        self.levels = {
-            "stalingrad": "stalingrad.json",
-        }
         self.entities = []
         self.powerups = []
         self.scores = []
@@ -267,6 +268,12 @@ class GameWindow(arcade.Window):
                 self.menuActive = False
                 self.mapPreviewActive = True
 
+            if self.menuItems[self.menuItemSelected] == "Options":
+                self.menuItemSelected = 0
+                self.menuActive = False
+                self.gameMenuActive = True
+                self.menuItems = self.gameMenuItems
+
             if self.menuItems[self.menuItemSelected] == "Controls":
                 self.menuItemSelected = 0
                 self.menuActive = False
@@ -298,6 +305,12 @@ class GameWindow(arcade.Window):
             else:
                 self.menuController.handle_input(key)
         elif self.mapPreviewActive:
+            if key == self.menuController.controlDict["back"]:
+                self.menuItemSelected = 0
+                self.menuActive = True
+                self.mapPreviewActive = False
+                self.menuItems = self.titlescreenItems
+        elif self.gameMenuActive:
             if key == self.menuController.controlDict["back"]:
                 self.menuItemSelected = 0
                 self.menuActive = True
@@ -340,10 +353,10 @@ class GameWindow(arcade.Window):
 
 
 if __name__ == "__main__":
-    with open("assets\\settings.json") as level:
-        settings = json.load(level)
+    with open("assets\\settings.json") as settings:
+        settings = json.load(settings)
     WINDOW_X = settings["WindowSettings"]["Width"]
     WINDOW_Y = settings["WindowSettings"]["Height"]
     SET_FULLSCREEN = settings["WindowSettings"]["Fullscreen"]
-    window = GameWindow(WINDOW_X, WINDOW_Y, SET_FULLSCREEN, TITLE)
+    window = GameWindow(settings)
     arcade.run()

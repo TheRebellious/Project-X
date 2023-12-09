@@ -67,52 +67,25 @@ class GraphicsEngine():
         self.draw_entities()
         self.draw_powerups()
         self.draw_scores()
-        if not self.gamewindow.multiplayer:
-            with open("code\\playerPositions.json", "r+") as playerPositions:
-                playerPositions = json.load(playerPositions)
-            for i in playerPositions["players"]:
-                if self.gamewindow.player is None:
-                    # find the first available player and make it the player
-                    for x in playerPositions["players"]:
-                        if x["visible"] == False:
-                            self.gamewindow.player = Player(
-                                self.gamewindow, x["id"], 1, 0.25, 0.5, x["name"])
-                            # set the player's position to the position of the player in the json file
-                            playerPositions["players"][x["id"]
-                                                       ]["x"] = self.gamewindow.player.center_x
-                            playerPositions["players"][x["id"]
-                                                       ]["y"] = self.gamewindow.player.center_y
-                            # set the player's visibility to true
-                            playerPositions["players"][x["id"]
-                                                       ]["visible"] = True
-                            # write the changes to the json file
-                            with open("code\\playerPositions.json", "w") as f:
-                                json.dump(playerPositions, f, indent=4)
-                            break
-                if i["visible"]:
-                    if i["id"] == self.gamewindow.player.id:
-                        pass
-                    x = i["x"]
-                    y = i["y"]
-                    color = i["name"]
-                    player = Player(self, i["id"], 1, 0.25, 0.5, color)
-                    player.center_x = x
-                    player.center_y = y
-                    self.draw_player(player)
+
+        if self.gamewindow.player is not None:
             self.draw_player(self.gamewindow.player)
         else:
-            if self.gamewindow.player is not None:
-                self.draw_player(self.gamewindow.player)
-            else:
-                self.gamewindow.player = Player(
-                    self.gamewindow, 0, 1, 0.25, 0.25, "red")
-                self.gamewindow.scores.append(0)
-            if self.gamewindow.player2 is not None:
-                self.draw_player(self.gamewindow.player2)
-            else:
-                self.gamewindow.player2 = Player(
-                    self.gamewindow, 1, 1, 0.25, 0.25, "yellow")
-                self.gamewindow.scores.append(0)
+            self.gamewindow.player = Player(
+                self.gamewindow, 0, 1, self.gamewindow.settings["PlayerSettings"]["Player1"]["gravity"], 
+                self.gamewindow.settings["PlayerSettings"]["Player1"]["friction"], 
+                self.gamewindow.settings["PlayerSettings"]["Player1"]["color"])
+            
+            self.gamewindow.scores.append(0)
+        if self.gamewindow.player2 is not None:
+            self.draw_player(self.gamewindow.player2)
+        else:
+            self.gamewindow.player2 = Player(
+                self.gamewindow, 1, 1, self.gamewindow.settings["PlayerSettings"]["Player2"]["gravity"],
+                self.gamewindow.settings["PlayerSettings"]["Player2"]["friction"],
+                self.gamewindow.settings["PlayerSettings"]["Player2"]["color"])
+            
+            self.gamewindow.scores.append(0)
 
     def draw_thumbnail(self, levelstr, xAlignment=0, yAlignment=0, scale=0.2):
         with open("assets\\levels\\" + levelstr + ".json") as level:
