@@ -1,6 +1,25 @@
 {
     "WindowSettings": {
         "Width": 1920,
-        "Height": 1080
+        "Height": 1080,
+        "Fullscreen": false
+    },
+    "GameSettings": {
+        "Flight": false,
+        "Bounce": true
+    },
+    "PlayerSettings": {
+        "Player1": {
+            "color": "",
+            "health": 100,
+            "gravity": 0.25,
+            "friction": 0.25
+        },
+        "Player2": {
+            "color": "",
+            "health": 100,
+            "gravity": 0.25,
+            "friction": 0.25
+        }
     }
 }

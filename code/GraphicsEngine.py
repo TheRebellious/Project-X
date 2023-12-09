@@ -1,6 +1,5 @@
 import json
 import arcade
-from controlHandler import PlayerController
 from entities import Player
 
 
@@ -68,7 +67,7 @@ class GraphicsEngine():
         self.draw_entities()
         self.draw_powerups()
         self.draw_scores()
-        if not self.gamewindow.splitScreen:
+        if not self.gamewindow.multiplayer:
             with open("code\\playerPositions.json", "r+") as playerPositions:
                 playerPositions = json.load(playerPositions)
             for i in playerPositions["players"]:

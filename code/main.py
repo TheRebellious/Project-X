@@ -2,6 +2,7 @@ from os import listdir
 import random
 import time
 import arcade
+import json
 from GraphicsEngine import GraphicsEngine
 from entities import Player, PowerUp
 from controlHandler import MenuController, PlayerController
@@ -16,7 +17,7 @@ class GameWindow(arcade.Window):
     menuActive = True
     menuItemSelected = 0
     titlescreenItems = ["Local multiplayer", "Map select",
-                        "Map preview", "Controls","Options", "Exit"]
+                        "Map preview", "Controls", "Options", "Exit"]
     menuItems = titlescreenItems
 
     optionsMenuActive = False
@@ -29,7 +30,7 @@ class GameWindow(arcade.Window):
 
     graphicsEngine = None
     gameActive = False
-    splitScreen = False
+    multiplayer = False
     colorDict = {
         "grey": arcade.color.ASH_GREY,
         "aspargus": arcade.color.GRAY_ASPARAGUS,
@@ -52,11 +53,11 @@ class GameWindow(arcade.Window):
         "None": 10,
     }
 
-    def __init__(self, width, height, title):
+    def __init__(self, width, height, fullscreen, title):
         super().__init__(width, height, title)
         arcade.set_background_color(arcade.color.AMAZON)
         self.set_size(width, height)
-        # self.set_fullscreen(True)
+        self.set_fullscreen(fullscreen)
         self.level = None
         self.levels = {
             "stalingrad": "stalingrad.json",
@@ -72,7 +73,7 @@ class GameWindow(arcade.Window):
 
         self.music = arcade.Sound(
             "assets\\music\\GameMusic.wav", streaming=True)
-        self.music.play(loop=True)
+        # self.music.play(loop=True)
 
         self.mapSelectItems = [f for f in listdir(
             "assets\\levels\\") if f.endswith(".json")]
@@ -86,7 +87,7 @@ class GameWindow(arcade.Window):
         self.selectedMap = self.mapSelectItems[0]
 
     def on_draw(self):
-        if self.splitScreen:
+        if self.multiplayer:
             for x in self.powerups:
                 if time.time()-x[1] > 10:
                     self.powerups.remove(x)
@@ -128,10 +129,10 @@ class GameWindow(arcade.Window):
             self.collisions(
                 self.player, self.level["objects"])
             self.getEntityCollisions(self.player, self.entities)
-            if self.powerups != [] and self.splitScreen:
+            if self.powerups != [] and self.multiplayer:
                 self.getPowerUpCollisions(self.player, self.powerups)
                 self.getPowerUpCollisions(self.player2, self.powerups)
-            if self.splitScreen:
+            if self.multiplayer:
                 self.collisions(
                     self.player2, self.level["objects"])
                 self.getEntityCollisions(self.player2, self.entities)
@@ -250,7 +251,7 @@ class GameWindow(arcade.Window):
                 arcade.key.A, "left"), (arcade.key.D, "right"), (arcade.key.ENTER, "enter"), (arcade.key.ESCAPE, "back")])
         if key == self.menuController.controlDict["select"] and self.menuActive:
             if self.menuItems[self.menuItemSelected] == "Local multiplayer":
-                self.splitScreen = True
+                self.multiplayer = True
                 self.menuItemSelected = 0
                 self.menuActive = False
                 self.gameActive = True
@@ -303,12 +304,12 @@ class GameWindow(arcade.Window):
                 self.mapPreviewActive = False
                 self.menuItems = self.titlescreenItems
 
-        if self.gameActive and self.splitScreen:
+        if self.gameActive and self.multiplayer:
             if key == self.menuController.controlDict["back"]:
                 # go back to the menu
                 self.menuActive = True
                 self.gameActive = False
-                self.splitScreen = False
+                self.multiplayer = False
                 self.player = None
                 self.player2 = None
                 self.playerController = None
@@ -339,5 +340,10 @@ class GameWindow(arcade.Window):
 
 
 if __name__ == "__main__":
-    window = GameWindow(WINDOW_X, WINDOW_Y, TITLE)
+    with open("assets\\settings.json") as level:
+        settings = json.load(level)
+    WINDOW_X = settings["WindowSettings"]["Width"]
+    WINDOW_Y = settings["WindowSettings"]["Height"]
+    SET_FULLSCREEN = settings["WindowSettings"]["Fullscreen"]
+    window = GameWindow(WINDOW_X, WINDOW_Y, SET_FULLSCREEN, TITLE)
     arcade.run()
