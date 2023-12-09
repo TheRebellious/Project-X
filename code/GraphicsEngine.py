@@ -14,7 +14,7 @@ class GraphicsEngine():
         self.WINDOW_X = x
         self.WINDOW_Y = y
 
-    def draw_menu(self):
+    def draw_main_menu(self):
         # draw title text
         arcade.draw_text("Project X", self.WINDOW_X / 2, self.WINDOW_Y /
                          2 + 200, arcade.color.WHITE, 100, anchor_x="center")
@@ -26,6 +26,9 @@ class GraphicsEngine():
             else:
                 arcade.draw_text(self.gamewindow.menuItems[i], self.WINDOW_X / 2, self.WINDOW_Y /
                                  2 - 70 * i, arcade.color.BLACK, 50, anchor_x="center")
+
+    def draw_game_options_menu(self):
+        pass
 
     def draw_map_select(self):
         for x in self.gamewindow.mapSelectItems:

@@ -16,7 +16,7 @@ class GameWindow(arcade.Window):
     menuActive = True
     menuItemSelected = 0
     titlescreenItems = ["Local multiplayer", "Map select",
-                        "Map preview", "Controls", "Exit"]
+                        "Map preview", "Controls","Options", "Exit"]
     menuItems = titlescreenItems
 
     optionsMenuActive = False
@@ -55,7 +55,8 @@ class GameWindow(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         arcade.set_background_color(arcade.color.AMAZON)
-        self.set_fullscreen(True)
+        self.set_size(width, height)
+        # self.set_fullscreen(True)
         self.level = None
         self.levels = {
             "stalingrad": "stalingrad.json",
@@ -67,6 +68,7 @@ class GameWindow(arcade.Window):
         self.playerController = None
         self.player2 = None
         self.player2Controller = None
+        self.flight_enabled = False
 
         self.music = arcade.Sound(
             "assets\\music\\GameMusic.wav", streaming=True)
@@ -105,7 +107,7 @@ class GameWindow(arcade.Window):
         arcade.start_render()
 
         if self.menuActive:
-            self.graphicsEngine.draw_menu()
+            self.graphicsEngine.draw_main_menu()
         if self.optionsMenuActive:
             self.graphicsEngine.draw_options_menu()
         if self.mapSelectActive:
@@ -337,5 +339,5 @@ class GameWindow(arcade.Window):
 
 
 if __name__ == "__main__":
-    window = GameWindow(WINDOW_X, WINDOW_X, TITLE)
+    window = GameWindow(WINDOW_X, WINDOW_Y, TITLE)
     arcade.run()

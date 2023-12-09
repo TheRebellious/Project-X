@@ -6,6 +6,7 @@ import arcade
 class Player():
     def __init__(self, window: arcade.Window, id, scale=1, gravity=0.25, friction=0.25, color="asparagus") -> None:
         super().__init__()
+        self.double_jump = True
         self.hp = 100
         self.powerupCounter = 0
         self.powerup = "None"
@@ -29,6 +30,7 @@ class Player():
         self.powerupCounter = 0
         self.powerup = "None"
         self.facing = "right"
+        self.double_jump = True
         self.in_air = True
         self.center_x = 1920/2
         self.center_y = 900
@@ -61,6 +63,8 @@ class Player():
             self.change_x += self.friction
         if self.in_air:
             self.change_y -= self.gravity
+        if self.on_ground:
+            self.double_jump = True
         self.center_y += self.change_y
         self.center_x += self.change_x
 

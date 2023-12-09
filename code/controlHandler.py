@@ -68,10 +68,13 @@ class PlayerController:
 
     def handle_input(self, key):
         if key == self.controlDict["up"]:
-            if self.player.in_air:
-                self.player.change_y += 12
-            else:
-                self.player.change_y = 10
+            if self.player.on_ground or self.player.double_jump or self.gamewindow.flight_enabled:
+                if not self.player.on_ground:
+                    self.player.double_jump = False
+                if self.player.in_air:
+                    self.player.change_y += 12
+                else:
+                    self.player.change_y = 10
         elif key == self.controlDict["down"]:
             if self.player.in_air:
                 self.player.change_y -= 12
